@@ -1,0 +1,10 @@
+{
+  "name": "wiskunde-lijn",
+  "version": "0.1.0",
+  "description": "Wiskunde leren in de trein: van VMBO naar HAVO wiskunde B",
+  "private": true,
+  "scripts": {
+    "test": "node tests/generators.test.js",
+    "start": "npx --yes serve ."
+  }
+}

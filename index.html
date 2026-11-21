@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wiskunde Lijn</title>
+<meta name="theme-color" content="#0f1b33">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+:root{
+  --bg:#0f1b33; --bg2:#13224199; --card:#182a4d; --card2:#1f3560; --line:#2a4273;
+  --text:#f4f1e8; --muted:#9fb0cf; --amber:#ffb703; --coral:#fb8500;
+  --green:#2ec4b6; --red:#ef476f; --blue:#5aa9ff;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;font-size:17px;line-height:1.45}
+body{min-height:100vh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#app{max-width:540px;margin:0 auto;padding:14px 16px 40px}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+h1,h2,h3{margin:0;line-height:1.2}
+small{color:var(--muted)}
+.card{background:var(--card);border-radius:var(--r);padding:16px;margin:12px 0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0}
+.brand{font-weight:800;font-size:20px;display:flex;align-items:center;gap:8px}
+.logo{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--amber);color:var(--bg);font-weight:900}
+.pill{background:var(--card);padding:6px 12px;border-radius:99px;font-weight:700;white-space:nowrap}
+.rk{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.rk b{font-size:19px}
+.bar{height:10px;border-radius:99px;background:var(--bg);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--amber),var(--coral));border-radius:99px;transition:width .5s}
+.btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;padding:14px;border-radius:14px;background:var(--amber);color:#1b1300;font-weight:800;font-size:18px;transition:transform .08s}
+.btn:active{transform:scale(.97)}
+.btn small{color:#5b4300;font-weight:600;font-size:13px}
+.btn.big{padding:18px;font-size:21px}
+.btn.sec{background:var(--card2);color:var(--text)}
+.btn.sec small{color:var(--muted)}
+.btn.ghost{background:transparent;color:var(--muted);font-weight:700}
+.btn.green{background:var(--green);color:#002b27}
+.row{display:flex;gap:10px;margin-top:10px}
+.actions{margin:14px 0 24px}
+.line-title{display:flex;align-items:center;gap:10px;font-size:18px;margin:8px 0 4px}
+.ln{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;font-weight:900;font-size:15px;color:var(--bg)}
+.l0{background:var(--amber)}.l1{background:var(--coral)}.l2{background:var(--green)}.l3{background:var(--blue)}.l4{background:#c77dff}.l5{background:var(--red)}.l6{background:#90be6d}
+.map{list-style:none;margin:0;padding:0 0 0 4px;position:relative}
+.map li{position:relative;padding-left:44px}
+.map li::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:6px;background:var(--amber)}
+.map li:first-child::before{top:28px}.map li:last-child::before{bottom:calc(100% - 28px)}
+.map li.locked::before{background:var(--line)}
+.node{position:absolute;left:3px;top:14px;width:28px;height:28px;border-radius:50%;background:var(--bg);border:6px solid var(--amber);z-index:1}
+.locked .node{border-color:var(--line)}
+.done .node{background:var(--amber)}
+.st{width:100%;text-align:left;background:var(--card);border-radius:16px;padding:12px 14px;margin:6px 0;display:flex;gap:12px;align-items:center}
+.st:active{transform:scale(.98)}
+.locked .st{opacity:.55}
+.st .ic{font-size:26px;width:34px;text-align:center}
+.st .nm{flex:1;min-width:0}
+.st .nm b{display:block}
+.st .meter{height:6px;background:var(--bg);border-radius:9px;margin-top:6px;overflow:hidden}
+.st .meter i{display:block;height:100%;background:var(--green)}
+.tag{font-size:12px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--bg);color:var(--muted)}
+.tag.rev{background:#3a2a05;color:var(--amber)}
+.tag.ok{background:#073b37;color:var(--green)}
+.future{margin-top:22px;opacity:.5}
+.future .fl{display:flex;align-items:center;gap:10px;padding:8px 0;font-weight:700}
+.foot{text-align:center;color:var(--muted);margin-top:24px}
+/* station */
+.hdr{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.back{width:42px;height:42px;border-radius:12px;background:var(--card);font-size:20px;flex:none}
+.hdr h1{font-size:21px;flex:1}
+.tabs{display:flex;background:var(--card);border-radius:14px;padding:4px;margin:12px 0}
+.tabs button{flex:1;padding:10px;border-radius:10px;font-weight:700;color:var(--muted)}
+.tabs button.on{background:var(--card2);color:var(--text)}
+.ex h3{font-size:18px;margin-bottom:6px;color:var(--amber)}
+.ex p{margin:6px 0}
+.ex ul{margin:6px 0;padding-left:20px}
+.ex .m{font-size:20px;background:var(--bg);border-radius:12px;padding:10px 12px;margin:8px 0;text-align:center}
+.steps .stp{background:var(--bg);border-radius:12px;padding:10px 14px;margin:8px 0;font-size:19px;animation:pop .25s}
+.steps .why{display:block;font-size:14px;color:var(--muted)}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* math */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;line-height:1.1}
+.fr>span:first-child{border-bottom:2px solid currentColor;padding:0 4px 2px}
+.fr>span:last-child{padding:2px 4px 0}
+sup{font-size:.62em;vertical-align:.75em;line-height:0}
+sup.q{color:var(--amber);font-weight:900}
+.sq{white-space:nowrap}.sq>span{border-top:2px solid currentColor;padding:0 3px;margin-left:1px}
+i.v{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:1.08em}
+.f{font-size:1.1em;margin-bottom:6px}
+/* practice */
+.ph{display:flex;align-items:center;gap:10px}
+.ph .mid{flex:1}
+.ph .mid small{display:block}
+.prog{height:8px;background:var(--card);border-radius:9px;overflow:hidden;margin-top:4px}
+.prog i{display:block;height:100%;background:var(--green);transition:width .3s}
+.timer{font-variant-numeric:tabular-nums}
+.qcard{background:var(--card);border-radius:var(--r);padding:18px 16px;margin:14px 0 10px;text-align:center}
+.qcard .lbl{font-size:14px;color:var(--muted);margin-bottom:8px}
+.qcard .q{font-size:27px;font-weight:700;line-height:1.5}
+.qcard .q.txt{font-size:18px;font-weight:600;text-align:left}
+.qcard .tip{font-size:13px;color:var(--muted);margin-top:8px}
+.ans{margin:12px auto 0;min-height:56px;max-width:300px;border-radius:14px;background:var(--bg);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
+.ans.empty::after{content:"?";color:var(--line)}
+.ans.ok{border-color:var(--green)}.ans.bad{border-color:var(--red);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.tools{display:flex;gap:8px;margin:8px 0}
+.tools button{flex:1;background:var(--card);border-radius:12px;padding:10px;font-weight:700;font-size:15px}
+.tools button:disabled{opacity:.4}
+.hint{background:#2a2410;border-left:4px solid var(--amber);border-radius:10px;padding:10px 12px;margin:6px 0;font-size:15px;animation:pop .25s}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.pad button{background:var(--card2);border-radius:14px;padding:14px 0;font-size:23px;font-weight:800}
+.pad button:active{background:var(--line)}
+.pad .ok{background:var(--amber);color:#1b1300}
+.pad .op{background:var(--card);color:var(--amber)}
+.fb{border-radius:var(--r);padding:16px;margin-top:10px;animation:pop .25s}
+.fb.good{background:#073b37}.fb.bad{background:#3d1222}.fb.meh{background:#2a2410}
+.fb h3{font-size:20px;margin-bottom:4px}
+.fb p{margin:6px 0}
+.fb .row .btn{font-size:16px;padding:12px}
+.sol{background:var(--bg);border-radius:12px;padding:8px 12px;margin-top:8px;text-align:left}
+.sol div{padding:5px 0;font-size:18px}
+.sol .why{display:block;font-size:13px;color:var(--muted)}
+.mc button{display:block;width:100%;text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin:8px 0;font-size:19px}
+.mc .first{opacity:.7;border-style:dashed}
+.mc button.right{border-color:var(--green);background:#073b37}
+.mc button.wrong{border-color:var(--red);background:#3d1222}
+/* scratchpad */
+#scratch{position:fixed;inset:0;background:#0b1428f2;z-index:50;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#scratch[hidden]{display:none}
+#scratch .bar2{display:flex;gap:8px;padding:10px 12px;align-items:center}
+#scratch .bar2 .qq{flex:1;font-size:18px;font-weight:700;overflow:auto}
+#scratch .bar2 button{background:var(--card2);padding:10px 14px;border-radius:12px;font-weight:700}
+#scratch canvas{flex:1;width:100%;touch-action:none;background:repeating-linear-gradient(#0b1428 0 31px,#1a2a4a 31px 32px)}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120px);background:var(--card2);padding:12px 18px;border-radius:14px;font-weight:700;box-shadow:0 8px 30px #0008;transition:transform .3s;z-index:60;max-width:90vw;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0)}
+textarea{width:100%;min-height:140px;border-radius:12px;background:var(--bg);color:var(--text);border:2px solid var(--line);padding:12px;font:inherit;font-size:16px;resize:vertical}
+.big-num{font-size:54px;font-weight:900;color:var(--amber);text-align:center}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stats div{background:var(--bg);border-radius:12px;padding:10px 4px}
+.stats b{display:block;font-size:24px}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.nl{width:100%;height:auto;margin:6px 0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="scratch" hidden>
+  <div class="bar2"><div class="qq" id="scratchQ"></div><button data-a="padClear">Wissen</button><button data-a="padClose">Klaar</button></div>
+  <canvas id="cv"></canvas>
+</div>
+<div id="toast"></div>
+
+<script id="core">
+/* ============ Rekenkern ============ */
+const M = '−';
+const X = '<i class="v">x</i>';
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a || 1; };
+const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+class F {
+  constructor(n, d = 1) { if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); this.n = n / g; this.d = d / g; if (this.n === 0) this.d = 1; }
+  add(o) { o = asF(o); return new F(this.n * o.d + o.n * this.d, this.d * o.d); }
+  sub(o) { o = asF(o); return new F(this.n * o.d - o.n * this.d, this.d * o.d); }
+  mul(o) { o = asF(o); return new F(this.n * o.n, this.d * o.d); }
+  div(o) { o = asF(o); return new F(this.n * o.d, this.d * o.n); }
+  eq(o) { o = asF(o); return this.n === o.n && this.d === o.d; }
+  toString() { return this.d === 1 ? String(this.n) : this.n + '/' + this.d; }
+}
+const asF = v => v instanceof F ? v : new F(v);
+function decF(s) { // "1.5" -> F
+  const neg = s.startsWith('-'); if (neg) s = s.slice(1);
+  const [i, f = ''] = s.split('.');
+  const d = Math.pow(10, f.length);
+  const r = new F(parseInt(i || '0', 10) * d + (f ? parseInt(f, 10) : 0), d);
+  return neg ? new F(-r.n, r.d) : r;
+}
+function parseAns(raw) {
+  let s = String(raw).replace(/[−–]/g, '-').replace(/,/g, '.').replace(/\s/g, '');
+  if (!s) return null;
+  const num = '-?\\d+(?:\\.\\d+)?|-?\\.\\d+';
+  let m = s.match(new RegExp('^(' + num + ')/(' + num + ')$'));
+  if (m) { const a = decF(m[1]), b = decF(m[2]); if (b.n === 0) return null; return a.div(b); }
+  if (new RegExp('^(' + num + ')$').test(s)) return decF(s);
+  return null;
+}
+function rawIsSimplest(raw) {
+  const s = String(raw).replace(/[−–]/g, '-').replace(/\s/g, '');
+  const m = s.match(/^-?(\d+)\/(\d+)$/);
+  if (!m) return !/[.,]/.test(s);
+  return gcd(+m[1], +m[2]) === 1 && +m[2] !== 1;
+}
+/* ============ Weergave-hulpjes ============ */
+const R = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const RN = (a, b) => { let x; do { x = R(a, b); } while (x === 0); return x; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const fmt = n => n < 0 ? M + (-n) : String(n);
+const p = n => n < 0 ? '(' + M + (-n) + ')' : String(n);
+const sg = n => n < 0 ? M + ' ' + (-n) : '+ ' + n;            // "+ 3" of "− 3"
+const fr = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const frRaw = (n, d) => (n < 0 ? M : '') + fr(Math.abs(n), d);
+const frF = f => { f = asF(f); return f.d === 1 ? fmt(f.n) : frRaw(f.n, f.d); };
+const sup = (b, e) => `${b}<sup>${e}</sup>`;
+const sqrt = inner => `<span class="sq">√<span>${inner}</span></span>`;
+const V = l => `<i class="v">${l}</i>`;
+function lin(a, b, v = X) { // ax + b
+  let s = '';
+  if (a !== 0) s = a === 1 ? v : a === -1 ? M + v : fmt(a) + v;
+  if (b !== 0) s = s ? s + ' ' + sg(b) : fmt(b);
+  return s || '0';
+}
+function simpNote(n, d) { // geeft extra stap als vereenvoudigen kan
+  const f = new F(n, d);
+  if (f.n === n && f.d === d) return [];
+  return [{ eq: '= ' + frF(f), why: f.d === 1 ? 'dat is een heel getal' : 'vereenvoudigd' }];
+}
+function Q(o) { return Object.assign({ kind: 'num', hints: [], sol: [], diag: () => null }, o); }
+
+const SIGN_MSG = 'Bijna! Het getal klopt, maar het teken (+ of −) niet.';
+const LTR = 'Je rekende van links naar rechts. Maar vermenigvuldigen en delen gaan vóór optellen en aftrekken!';
+const MVD = 'Onthoud <b>Meneer Van Dale Wacht Op Antwoord</b>: eerst haakjes, dan machten en wortels, dan keer en delen, dan plus en min.';
+
+/* ============ Stations ============ */
+const STATIONS = [
+/* ---------- 1. Negatieve getallen ---------- */
+{ id: 'neg', icon: '🌡️', name: 'Negatieve getallen', sub: 'Rekenen onder nul',
+  intro: [
+    { t: 'De getallenlijn', h: `<p>Negatieve getallen liggen links van 0. Hoe verder naar links, hoe kleiner.</p>
+      <svg class="nl" viewBox="0 0 320 50"><line x1="10" y1="22" x2="310" y2="22" stroke="#9fb0cf" stroke-width="2"/>${[-5,-4,-3,-2,-1,0,1,2,3,4,5].map((n,i)=>`<line x1="${20+i*28}" y1="16" x2="${20+i*28}" y2="28" stroke="${n===0?'#ffb703':'#9fb0cf'}" stroke-width="2"/><text x="${20+i*28}" y="44" fill="${n===0?'#ffb703':'#f4f1e8'}" font-size="13" text-anchor="middle">${fmt(n)}</text>`).join('')}</svg>
+      <p><b>Plus</b> = naar rechts lopen. <b>Min</b> = naar links lopen.</p><div class="m">${M}3 + 5 = 2</div>` },
+    { t: 'Min min wordt plus', h: `<p>Staan er twee tekens naast elkaar? Maak er één teken van:</p>
+      <ul><li>${M} (${M}4) wordt <b>+ 4</b></li><li>+ (${M}4) wordt <b>${M} 4</b></li></ul><div class="m">2 ${M} (${M}4) = 2 + 4 = 6</div>` },
+    { t: 'Keer en delen', h: `<p>Reken eerst zonder mintekens. Kies daarna het teken:</p>
+      <ul><li>gelijke tekens → <b>plus</b></li><li>verschillende tekens → <b>min</b></li></ul>
+      <div class="m">(${M}3) × (${M}4) = 12</div><div class="m">(${M}3) × 4 = ${M}12</div><div class="m">${M}12 : 3 = ${M}4</div>` },
+  ],
+  example: { q: `${M}3 ${M} (${M}8)`, steps: [
+    { eq: `= ${M}3 + 8`, why: 'min min wordt plus' },
+    { eq: 'Begin bij −3, loop 8 stappen naar rechts', why: 'plus = naar rechts' },
+    { eq: '= 5', why: 'klaar!' } ] },
+  explain: 'Leg aan een leerling uit waarom 5 − (−3) hetzelfde is als 5 + 3.',
+  gen(l) {
+    if (l === 3 && Math.random() < .5) {
+      const a = RN(-12, 12), b = RN(-12, 12), c = RN(-12, 12);
+      const o1 = pick(['+', M]), o2 = pick(['+', M]);
+      const v1 = o1 === '+' ? b : -b, v2 = o2 === '+' ? c : -c, ans = a + v1 + v2;
+      return Q({ html: `${fmt(a)} ${o1} ${p(b)} ${o2} ${p(c)}`, ans: new F(ans),
+        hints: ['Maak eerst van elk dubbel teken één teken.', `Herschreven: ${fmt(a)} ${sg(v1)} ${sg(v2)}`, `Eerst: ${fmt(a)} ${sg(v1)} = ${fmt(a + v1)}`],
+        sol: [{ eq: `= ${fmt(a)} ${sg(v1)} ${sg(v2)}`, why: 'dubbele tekens samengevoegd' }, { eq: `= ${fmt(a + v1)} ${sg(v2)}`, why: 'van links naar rechts' }, { eq: `= ${fmt(ans)}` }],
+        diag: x => ans !== 0 && x.eq(-ans) ? SIGN_MSG : null });
+    }
+    const op = pick(l === 1 ? ['+', M] : ['+', M, '×', ':']);
+    let a, b, ans;
+    if (op === ':') { let q = RN(-9, 9); b = RN(-9, 9); if (q > 0 && b > 0) q = -q; a = q * b; ans = q; }
+    else if (op === '×') { a = RN(-10, 10); b = RN(-10, 10); if (a > 0 && b > 0) a = -a; ans = a * b; }
+    else { const r = l === 1 ? 10 : 15; a = RN(-r, r); b = RN(-10, 10); if (a > 0 && b > 0) { if (Math.random() < .5) a = -a; else b = -b; } ans = op === '+' ? a + b : a - b; }
+    const html = `${fmt(a)} ${op} ${p(b)}`;
+    if (op === '+' || op === M) {
+      const c = op === '+' ? b : -b;
+      const h2 = op === M && b < 0 ? `Min min wordt plus: ${fmt(a)} ${M} (${M}${-b}) = ${fmt(a)} + ${-b}`
+        : op === '+' && b < 0 ? `Plus min wordt min: ${fmt(a)} + (${M}${-b}) = ${fmt(a)} ${M} ${-b}` : `Begin op de getallenlijn bij ${fmt(a)}.`;
+      return Q({ html, ans: new F(ans),
+        hints: ['Denk aan de getallenlijn: plus = naar rechts, min = naar links.', h2, `Begin bij ${fmt(a)} en loop ${Math.abs(c)} stappen naar ${c > 0 ? 'rechts' : 'links'}.`],
+        sol: [{ eq: `= ${fmt(a)} ${sg(c)}`, why: b < 0 ? 'twee tekens → één teken' : '' }, { eq: `= ${fmt(ans)}`, why: `vanaf ${fmt(a)}: ${Math.abs(c)} stappen naar ${c > 0 ? 'rechts' : 'links'}` }],
+        diag: x => {
+          if (ans !== 0 && x.eq(-ans)) return SIGN_MSG;
+          if (op === M && b < 0 && x.eq(a + b)) return `Min min wordt plus! ${M} (${M}${-b}) is hetzelfde als + ${-b}.`;
+          if (op === '+' && b < 0 && x.eq(a - b)) return `Plus min wordt min: + (${M}${-b}) is hetzelfde als ${M} ${-b}.`;
+          return null; } });
+    }
+    const same = (a < 0) === (b < 0);
+    return Q({ html, ans: new F(ans),
+      hints: ['Reken eerst zonder de mintekens.', 'Tekenregel: gelijke tekens → plus, verschillende tekens → min.', `${Math.abs(a)} ${op} ${Math.abs(b)} = ${Math.abs(ans)}, en de tekens zijn ${same ? 'gelijk' : 'verschillend'}.`],
+      sol: [{ eq: `${Math.abs(a)} ${op} ${Math.abs(b)} = ${Math.abs(ans)}`, why: 'eerst zonder tekens' }, { eq: `= ${fmt(ans)}`, why: same ? 'gelijke tekens → plus' : 'verschillende tekens → min' }],
+      diag: x => ans !== 0 && x.eq(-ans) ? SIGN_MSG : null });
+  },
+  mc() {
+    const a = R(2, 9), b = R(a + 1, 14);
+    return { lines: [`${M}${a} ${M} (${M}${b})`, `= ${M}${a} ${M} ${b}`, `= ${M}${a + b}`], wrong: 1,
+      explain: `Min min wordt plus: ${M}${a} ${M} (${M}${b}) = ${M}${a} + ${b} = ${b - a}.` };
+  } },
+
+/* ---------- 2. Volgorde van bewerkingen ---------- */
+{ id: 'volg', icon: '🚦', name: 'Volgorde van bewerkingen', sub: 'Meneer Van Dale',
+  intro: [
+    { t: 'Meneer Van Dale Wacht Op Antwoord', h: `<p>Deze volgorde houd je altijd aan:</p><ol><li><b>Haakjes</b></li><li><b>M</b>achten en <b>W</b>ortels</li><li><b>V</b>ermenigvuldigen en <b>D</b>elen, van links naar rechts</li><li><b>O</b>ptellen en <b>A</b>ftrekken, van links naar rechts</li></ol><div class="m">2 + 3 × 4 = 2 + 12 = 14</div><p>Dus níet 5 × 4 = 20!</p>` },
+    { t: `Valkuil: ${M}3² of (${M}3)²?`, h: `<p>De macht hoort alleen bij het getal er direct onder.</p><div class="m">${M}${sup(3, 2)} = ${M}(3 × 3) = ${M}9</div><div class="m">(${M}3)<sup>2</sup> = (${M}3) × (${M}3) = 9</div><p>Dit komt later bij formules steeds terug!</p>` },
+  ],
+  example: { q: `10 ${M} 2 × (1 + 3)<sup>2</sup>`, steps: [
+    { eq: `= 10 ${M} 2 × ${sup(4, 2)}`, why: 'haakjes: 1 + 3 = 4' },
+    { eq: `= 10 ${M} 2 × 16`, why: `macht: ${sup(4, 2)} = 16` },
+    { eq: `= 10 ${M} 32`, why: 'keer: 2 × 16 = 32' },
+    { eq: `= ${M}22`, why: 'min als laatste' } ] },
+  explain: 'Leg aan een leerling uit waarom 2 + 3 × 4 niet 20 is.',
+  gen(l) {
+    const T = [
+      [1, () => { const a = R(2, 12), b = R(2, 9), c = R(2, 9); return { html: `${a} + ${b} × ${c}`, ans: a + b * c, wrong: (a + b) * c, wm: LTR, first: `${b} × ${c}`, steps: [[`${b} × ${c} = ${b * c}`, 'keer gaat voor plus'], [`${a} + ${b * c} = ${a + b * c}`]] }; }],
+      [1, () => { const a = R(20, 40), b = R(2, 6), c = R(2, 6); return { html: `${a} ${M} ${b} × ${c}`, ans: a - b * c, wrong: (a - b) * c, wm: LTR, first: `${b} × ${c}`, steps: [[`${b} × ${c} = ${b * c}`, 'keer gaat voor min'], [`${a} ${M} ${b * c} = ${fmt(a - b * c)}`]] }; }],
+      [1, () => { const c = R(2, 6), q = R(2, 8), b = c * q, a = R(2, 15); return { html: `${a} + ${b} : ${c}`, ans: a + q, wrong: new F(a + b, c), wm: LTR, first: `${b} : ${c}`, steps: [[`${b} : ${c} = ${q}`, 'delen gaat voor plus'], [`${a} + ${q} = ${a + q}`]] }; }],
+      [1, () => { const a = R(2, 9), b = R(2, 9), c = R(2, 6); return { html: `(${a} + ${b}) × ${c}`, ans: (a + b) * c, wrong: a + b * c, wm: 'Haakjes gaan altijd eerst! Reken eerst uit wat tussen de haakjes staat.', first: `${a} + ${b}`, steps: [[`${a} + ${b} = ${a + b}`, 'haakjes eerst'], [`${a + b} × ${c} = ${(a + b) * c}`]] }; }],
+      [2, () => { const a = R(10, 40), b = R(2, 6); return { html: `${a} ${M} ${sup(b, 2)}`, ans: a - b * b, wrong: (a - b) ** 2, wm: 'Eerst de macht, pas daarna aftrekken.', first: sup(b, 2), steps: [[`${sup(b, 2)} = ${b * b}`, 'macht eerst'], [`${a} ${M} ${b * b} = ${fmt(a - b * b)}`]] }; }],
+      [2, () => { const a = R(6, 12), b = R(1, 5); return { html: `(${a} ${M} ${b})<sup>2</sup>`, ans: (a - b) ** 2, wrong: a * a - b * b, wm: 'Haakjes eerst: reken uit wat tussen de haakjes staat en kwadrateer daarna.', first: `${a} ${M} ${b}`, steps: [[`${a} ${M} ${b} = ${a - b}`, 'haakjes eerst'], [`${sup(a - b, 2)} = ${(a - b) ** 2}`]] }; }],
+      [2, () => { const a = R(2, 8), b = R(5, 12), c = R(1, 4); return { html: `${a} × (${b} ${M} ${c})`, ans: a * (b - c), wrong: a * b - c, wm: 'Haakjes gaan altijd eerst!', first: `${b} ${M} ${c}`, steps: [[`${b} ${M} ${c} = ${b - c}`, 'haakjes eerst'], [`${a} × ${b - c} = ${a * (b - c)}`]] }; }],
+      [2, () => { const a = R(2, 9), b = R(2, 6), c = R(2, 6), d = R(2, 9); return { html: `${a} + ${b} × ${c} ${M} ${d}`, ans: a + b * c - d, wrong: (a + b) * c - d, wm: LTR, first: `${b} × ${c}`, steps: [[`${b} × ${c} = ${b * c}`, 'keer eerst'], [`${a} + ${b * c} ${M} ${d} = ${fmt(a + b * c - d)}`, 'dan van links naar rechts']] }; }],
+      [3, () => { const a = R(2, 9); return { html: `${M}${sup(a, 2)}`, ans: -a * a, wrong: a * a, wm: `Let op: ${M}${sup(a, 2)} betekent ${M}(${a} × ${a}). De macht hoort alleen bij de ${a}, niet bij het minteken.`, first: sup(a, 2), steps: [[`${sup(a, 2)} = ${a * a}`, `de macht hoort alleen bij ${a}`], [`daarna het minteken: ${fmt(-a * a)}`]] }; }],
+      [3, () => { const a = R(2, 9); return { html: `(${M}${a})<sup>2</sup>`, ans: a * a, wrong: -a * a, wm: `Nu staat het minteken binnen de haakjes: (${M}${a}) × (${M}${a}) = ${a * a}. Min keer min is plus.`, first: `(${M}${a}) × (${M}${a})`, steps: [[`(${M}${a}) × (${M}${a})`, 'het minteken doet mee'], [`= ${a * a}`, 'min keer min is plus']] }; }],
+      [3, () => { const a = R(2, 20), b = R(2, 5), c = R(1, 4), d = R(5, 9); return { html: `${a} ${M} ${b} × (${c} ${M} ${d})`, ans: a - b * (c - d), wrong: (a - b) * (c - d), wm: LTR, first: `${c} ${M} ${d}`, steps: [[`${c} ${M} ${d} = ${fmt(c - d)}`, 'haakjes eerst'], [`${b} × ${p(c - d)} = ${fmt(b * (c - d))}`, 'dan keer'], [`${a} ${M} ${p(b * (c - d))} = ${fmt(a - b * (c - d))}`, 'min min wordt plus']] }; }],
+      [3, () => { const a = R(2, 7), b = R(2, 6), c = R(2, 6); return { html: `${sup(a, 2)} ${M} ${b} × ${c}`, ans: a * a - b * c, wrong: (a * a - b) * c, wm: LTR, first: sup(a, 2), steps: [[`${sup(a, 2)} = ${a * a}`, 'macht eerst'], [`${b} × ${c} = ${b * c}`, 'dan keer'], [`${a * a} ${M} ${b * c} = ${fmt(a * a - b * c)}`]] }; }],
+    ];
+    const pool = T.filter(t => t[0] === l), low = T.filter(t => t[0] < l);
+    const t = (low.length && Math.random() < .3 ? pick(low) : pick(pool))[1]();
+    const ans = new F(t.ans), wrong = asF(t.wrong);
+    return Q({ html: t.html, ans,
+      hints: [MVD, `Wat reken je als eerste uit? Kijk naar: ${t.first}`, `Eerste stap: ${t.steps[0][0]}`],
+      sol: t.steps.map(s => ({ eq: s[0], why: s[1] || '' })),
+      diag: x => !wrong.eq(ans) && x.eq(wrong) ? t.wm : (t.ans !== 0 && x.eq(-t.ans) ? SIGN_MSG : null) });
+  },
+  mc() {
+    const a = R(2, 9), b = R(2, 9), c = R(2, 9);
+    return { lines: [`${a} + ${b} × ${c}`, `= ${a + b} × ${c}`, `= ${(a + b) * c}`], wrong: 1,
+      explain: `Keer gaat vóór plus: eerst ${b} × ${c} = ${b * c}, dan ${a} + ${b * c} = ${a + b * c}.` };
+  } },
+
+/* ---------- 3. Breuken ---------- */
+{ id: 'breuk', icon: '🍕', name: 'Breuken', sub: 'Optellen, keer, delen', tip: 'Typ een breuk met / zoals 3/4',
+  intro: [
+    { t: 'Wat is een breuk?', h: `<p>${fr(3, 4)}: de <b>noemer</b> (onder) zegt in hoeveel gelijke stukken je iets verdeelt, de <b>teller</b> (boven) hoeveel stukken je hebt.</p><p><b>Vereenvoudigen:</b> deel teller en noemer door hetzelfde getal.</p><div class="m">${fr(6, 8)} = ${fr(3, 4)} &nbsp;(allebei : 2)</div>` },
+    { t: 'Optellen en aftrekken', h: `<p>Dat kan alleen als de noemers <b>gelijk</b> zijn. Maak ze dus eerst gelijk, en tel daarna alleen de tellers op.</p><div class="m">${fr(1, 2)} + ${fr(1, 3)} = ${fr(3, 6)} + ${fr(2, 6)} = ${fr(5, 6)}</div><p>De noemers tel je <b>nooit</b> bij elkaar op.</p>` },
+    { t: 'Keer en delen', h: `<p><b>Keer:</b> teller × teller en noemer × noemer.</p><div class="m">${fr(2, 3)} × ${fr(4, 5)} = ${fr(8, 15)}</div><p><b>Delen:</b> keer het omgekeerde (draai de tweede breuk om).</p><div class="m">${fr(2, 3)} : ${fr(4, 5)} = ${fr(2, 3)} × ${fr(5, 4)} = ${fr(10, 12)} = ${fr(5, 6)}</div>` },
+  ],
+  example: { q: `${fr(2, 3)} + ${fr(1, 4)}`, steps: [
+    { eq: 'Gelijke noemer: 12', why: '3 en 4 passen allebei in 12' },
+    { eq: `${fr(2, 3)} = ${fr(8, 12)} &nbsp; en &nbsp; ${fr(1, 4)} = ${fr(3, 12)}`, why: 'teller en noemer keer hetzelfde getal' },
+    { eq: `${fr(8, 12)} + ${fr(3, 12)} = ${fr(11, 12)}`, why: 'tel de tellers op, de noemer blijft 12' } ] },
+  explain: 'Leg aan een leerling uit waarom 1/2 + 1/3 niet 2/5 is.',
+  gen(l) {
+    const type = pick(l === 1 ? ['zelfde', 'vereenv', 'zelfde'] : l === 2 ? ['versch', 'versch', 'keer', 'vereenv'] : ['delen', 'geheel', 'negversch', 'versch']);
+    if (type === 'zelfde') {
+      const d = R(3, 12); let a = R(1, d - 1), b = R(1, d - 1); const op = pick(['+', M]); if (op === M && b > a) [a, b] = [b, a];
+      const n = op === '+' ? a + b : a - b, ans = new F(n, d);
+      return Q({ html: `${fr(a, d)} ${op} ${fr(b, d)}`, ans,
+        hints: ['Kijk naar de noemers: die zijn al gelijk!', `Bij gelijke noemers reken je alleen met de tellers. De noemer blijft ${d}.`, `${a} ${op} ${b} = ${n}, dus ${fr(n, d)}`],
+        sol: [{ eq: `= ${frRaw(n, d)}`, why: `tellers: ${a} ${op} ${b} = ${n}` }, ...simpNote(n, d)],
+        diag: x => op === '+' && x.eq(new F(a + b, 2 * d)) ? `De noemer blijft gewoon ${d}! Je telt alleen de tellers op.` : null });
+    }
+    if (type === 'vereenv') {
+      let n, d; do { d = R(2, 9); n = R(1, d - 1); } while (gcd(n, d) !== 1);
+      const k = R(2, 6), ans = new F(n, d);
+      return Q({ html: fr(n * k, d * k), label: 'Vereenvoudig zo ver mogelijk', ans,
+        hints: ['Zoek een getal waar de teller én de noemer allebei door te delen zijn.', `Teller en noemer zijn allebei deelbaar door ${k}.`, `${n * k} : ${k} = ${n} en ${d * k} : ${k} = ${d}`],
+        sol: [{ eq: `= ${fr(n, d)}`, why: `teller en noemer allebei : ${k}` }],
+        check: (raw, x) => x.eq(ans) ? (rawIsSimplest(raw) ? { ok: true } : { ok: false, soft: true, msg: 'Dat klopt, maar het kan nóg verder vereenvoudigd worden!' }) : { ok: false } });
+    }
+    if (type === 'versch' || type === 'negversch') {
+      let b, d; do { b = R(2, 7); d = R(2, 7); } while (b === d);
+      let a = R(1, b - 1), c = R(1, d - 1); if (type === 'negversch') a = -a;
+      const op = pick(['+', M]), L = lcm(b, d), A = a * L / b, C = c * L / d, n = op === '+' ? A + C : A - C;
+      const ans = new F(a, b)[op === '+' ? 'add' : 'sub'](new F(c, d));
+      return Q({ html: `${frRaw(a, b)} ${op} ${fr(c, d)}`, ans,
+        hints: ['Bij optellen en aftrekken moeten de noemers eerst gelijk zijn.', `Een gemeenschappelijke noemer is ${L}.`, `${frRaw(a, b)} = ${frRaw(A, L)} en ${fr(c, d)} = ${fr(C, L)}`],
+        sol: [{ eq: `= ${frRaw(A, L)} ${op} ${fr(C, L)}`, why: `noemers gelijk maken: ${L}` }, { eq: `= ${frRaw(n, L)}`, why: 'tellers optellen/aftrekken' }, ...simpNote(n, L)],
+        diag: x => {
+          const w1 = new F(op === '+' ? a + c : a - c, b + d);
+          if (x.eq(w1) && !w1.eq(ans)) return 'Je mag de noemers niet bij elkaar optellen! Maak eerst de noemers gelijk.';
+          const w2 = new F(op === '+' ? a + c : a - c, L);
+          if (x.eq(w2) && !w2.eq(ans)) return 'Je hebt de noemers gelijk gemaakt, maar vergeten de tellers mee te vermenigvuldigen.';
+          return null; } });
+    }
+    if (type === 'keer') {
+      const a = R(1, 8), b = R(2, 9), c = R(1, 8), d = R(2, 9), ans = new F(a * c, b * d);
+      return Q({ html: `${fr(a, b)} × ${fr(c, d)}`, ans,
+        hints: ['Bij keer hoef je de noemers níet gelijk te maken.', 'Teller keer teller, noemer keer noemer.', `${a} × ${c} = ${a * c} en ${b} × ${d} = ${b * d}`],
+        sol: [{ eq: `= ${fr(a * c, b * d)}`, why: 'teller × teller, noemer × noemer' }, ...simpNote(a * c, b * d)],
+        diag: x => x.eq(new F(a * d, b * c)) && !ans.eq(new F(a * d, b * c)) ? 'Dat is delen! Bij keer draai je niets om.' : null });
+    }
+    if (type === 'delen') {
+      const a = R(1, 8), b = R(2, 9), c = R(1, 8), d = R(2, 9), ans = new F(a * d, b * c), w = new F(a * c, b * d);
+      return Q({ html: `${fr(a, b)} : ${fr(c, d)}`, ans,
+        hints: ['Delen door een breuk = vermenigvuldigen met het omgekeerde.', `Draai ${fr(c, d)} om: dat wordt ${fr(d, c)}.`, `${fr(a, b)} × ${fr(d, c)} = ${fr(a * d, b * c)}`],
+        sol: [{ eq: `= ${fr(a, b)} × ${fr(d, c)}`, why: 'keer het omgekeerde' }, { eq: `= ${fr(a * d, b * c)}` }, ...simpNote(a * d, b * c)],
+        diag: x => x.eq(w) && !w.eq(ans) ? 'Je hebt vermenigvuldigd in plaats van gedeeld. Draai de tweede breuk eerst om!' : null });
+    }
+    // geheel getal × breuk
+    const n = R(2, 9), a = R(1, 6), b = R(2, 9), ans = new F(n * a, b);
+    return Q({ html: `${n} × ${fr(a, b)}`, ans,
+      hints: [`Je kunt ${n} schrijven als ${fr(n, 1)}.`, `Alleen de teller gaat keer ${n}, de noemer blijft ${b}.`, `${n} × ${a} = ${n * a}, dus ${fr(n * a, b)}`],
+      sol: [{ eq: `= ${fr(n, 1)} × ${fr(a, b)}`, why: `${n} = ${n}/1` }, { eq: `= ${fr(n * a, b)}` }, ...simpNote(n * a, b)],
+      diag: x => x.eq(new F(a, b)) && !ans.eq(new F(a, b)) ? `Je hebt teller én noemer met ${n} vermenigvuldigd. Alleen de teller!` : null });
+  },
+  mc() {
+    const pairs = [[2, 3], [2, 5], [3, 4], [3, 5], [2, 7], [4, 5]];
+    const [b, d] = pick(pairs), a = 1, c = 1, L = b * d;
+    if (Math.random() < .5) return { lines: [`${fr(a, b)} + ${fr(c, d)}`, `= ${fr(a + ' + ' + c, b + ' + ' + d)}`, `= ${frF(new F(a + c, b + d))}`], wrong: 1,
+      explain: `Noemers mag je niet optellen. Goed is: ${fr(d, L)} + ${fr(b, L)} = ${fr(b + d, L)}.` };
+    return { lines: [`${fr(a, b)} + ${fr(c, d)}`, `= ${fr(a, L)} + ${fr(c, L)}`, `= ${fr(a + c, L)}`], wrong: 1,
+      explain: `De noemer is goed gelijk gemaakt (${L}), maar de tellers moeten mee: ${fr(a, b)} = ${fr(d, L)} en ${fr(c, d)} = ${fr(b, L)}. Antwoord: ${fr(b + d, L)}.` };
+  } },
+
+/* ---------- 4. Machten en wortels ---------- */
+{ id: 'macht', icon: '🚀', name: 'Machten en wortels', sub: 'Exponenten en rekenregels',
+  intro: [
+    { t: 'Wat is een macht?', h: `<p>De <b>exponent</b> (klein, boven) zegt hoe vaak je het <b>grondtal</b> met zichzelf vermenigvuldigt.</p><div class="m">${sup(2, 5)} = 2 × 2 × 2 × 2 × 2 = 32</div><p>Dus níet 2 × 5!</p><p><b>Negatief grondtal:</b> even exponent → positief, oneven → negatief.</p><div class="m">(${M}2)<sup>3</sup> = ${M}8 &nbsp;&nbsp; (${M}2)<sup>4</sup> = 16</div>` },
+    { t: 'Rekenregels', h: `<ul><li>${sup('a', 'm')} × ${sup('a', 'n')} = ${sup('a', 'm+n')} &nbsp;(optellen)</li><li>${sup('a', 'm')} : ${sup('a', 'n')} = ${sup('a', 'm−n')} &nbsp;(aftrekken)</li><li>(${sup('a', 'm')})<sup>n</sup> = ${sup('a', 'm·n')} &nbsp;(keer)</li><li>${sup('a', 0)} = 1</li><li>${sup('a', M + 'n')} = ${fr(1, sup('a', 'n'))}</li></ul>` },
+    { t: 'Wortels', h: `<p>${sqrt(25)} = 5, want ${sup(5, 2)} = 25. Een wortel is het omgekeerde van kwadrateren.</p><div class="m">${sqrt(`${sup(3, 2)} + ${sup(4, 2)}`)} = ${sqrt(25)} = 5</div><p>Dit heb je straks nodig bij Pythagoras!</p>` },
+  ],
+  example: { q: `${sup(2, 3)} × ${sup(2, 4)}`, steps: [
+    { eq: 'Zelfde grondtal (2)', why: 'dan mag je de rekenregel gebruiken' },
+    { eq: `= 2<sup>3+4</sup> = ${sup(2, 7)}`, why: 'bij keer: exponenten optellen' },
+    { eq: '= 128', why: '2×2×2×2×2×2×2' } ] },
+  explain: `Leg aan een leerling uit waarom ${M}3² iets anders is dan (${M}3)².`,
+  gen(l) {
+    const type = pick(l === 1 ? ['macht', 'wortel'] : l === 2 ? ['negmacht', 'regel', 'regel', 'nul'] : ['negexp', 'pyth', 'combi', 'regel']);
+    if (type === 'macht') {
+      const b = pick([2, 2, 3, 3, 4, 5, 10]), e = b === 2 ? R(2, 6) : b === 10 ? R(2, 5) : b === 3 ? R(2, 4) : R(2, 3), ans = b ** e;
+      const rep = Array(e).fill(b).join(' × ');
+      return Q({ html: sup(b, e), ans: new F(ans),
+        hints: ['De exponent zegt hoe vaak je het grondtal met zichzelf vermenigvuldigt.', `${sup(b, e)} = ${rep}`, `${b} × ${b} = ${b * b}${e > 2 ? ', reken zo verder' : ''}`],
+        sol: [{ eq: `= ${rep}` }, { eq: `= ${ans}` }],
+        diag: x => x.eq(b * e) && b * e !== ans ? `${sup(b, e)} betekent ${rep}. Niet ${b} × ${e}!` : null });
+    }
+    if (type === 'wortel') {
+      const r = R(3, 15);
+      return Q({ html: sqrt(r * r), ans: new F(r),
+        hints: [`Welk getal keer zichzelf geeft ${r * r}?`, `Het antwoord ligt tussen ${Math.max(1, r - 2)} en ${r + 2}.`, `${r} × ${r} = ${r * r}`],
+        sol: [{ eq: `= ${r}`, why: `want ${r} × ${r} = ${r * r}` }],
+        diag: x => x.eq(new F(r * r, 2)) ? 'Een wortel is niet hetzelfde als delen door 2!' : null });
+    }
+    if (type === 'negmacht') {
+      const b = R(2, 5), e = R(2, 4), inside = Math.random() < .5, ans = inside ? (-b) ** e : -(b ** e);
+      return Q({ html: inside ? `(${M}${b})<sup>${e}</sup>` : `${M}${sup(b, e)}`, ans: new F(ans),
+        hints: ['Kijk goed: staat het minteken binnen of buiten de haakjes?',
+          inside ? `Binnen de haakjes doet het minteken mee: (${M}${b}) × (${M}${b})${e > 2 ? ' × …' : ''}. Even exponent → positief, oneven → negatief.` : `Zonder haakjes hoort de macht alleen bij de ${b}. Reken ${sup(b, e)} uit en zet er een minteken voor.`,
+          `${sup(b, e)} = ${b ** e}`],
+        sol: inside ? [{ eq: `= ${Array(e).fill('(' + M + b + ')').join(' × ')}` }, { eq: `= ${fmt(ans)}`, why: e % 2 ? 'oneven aantal mintekens → min' : 'even aantal mintekens → plus' }]
+          : [{ eq: `= ${M}(${Array(e).fill(b).join(' × ')})`, why: `de macht hoort alleen bij ${b}` }, { eq: `= ${fmt(ans)}` }],
+        diag: x => x.eq(-ans) ? (inside ? 'Kijk naar het teken: tel hoeveel mintekens je met elkaar vermenigvuldigt.' : `Zonder haakjes hoort het minteken er niet bij: ${M}${sup(b, e)} = ${M}(${b ** e}).`) : null });
+    }
+    if (type === 'regel') {
+      const a = R(2, 9), kind = pick(['keer', 'deel', 'machtmacht']);
+      let m = R(2, 9), n = R(2, 9), ans, html, rule, wrong, wm, h1;
+      if (kind === 'keer') { ans = m + n; html = `${sup(a, m)} × ${sup(a, n)} = ${a}<sup class="q">?</sup>`; rule = 'Bij keer met hetzelfde grondtal: exponenten optellen.'; wrong = m * n; wm = 'Bij keer tel je de exponenten op, je vermenigvuldigt ze niet.'; h1 = `${sup(a, m)} is ${m} keer een ${a}, en ${sup(a, n)} is ${n} keer een ${a}. Hoeveel keer een ${a} heb je samen?`; }
+      else if (kind === 'deel') { if (m <= n) [m, n] = [n + 1, m]; ans = m - n; html = `${sup(a, m)} : ${sup(a, n)} = ${a}<sup class="q">?</sup>`; rule = 'Bij delen met hetzelfde grondtal: exponenten aftrekken.'; wrong = m + n; wm = 'Bij delen trek je de exponenten af.'; h1 = `Je hebt ${m} keer een ${a} en je deelt er ${n} weg. Hoeveel blijven er over?`; }
+      else { m = R(2, 5); n = R(2, 4); ans = m * n; html = `(${sup(a, m)})<sup>${n}</sup> = ${a}<sup class="q">?</sup>`; rule = 'Macht van een macht: exponenten vermenigvuldigen.'; wrong = m + n; wm = 'Bij een macht van een macht vermenigvuldig je de exponenten.'; h1 = `Je neemt ${sup(a, m)} in totaal ${n} keer met zichzelf keer.`; }
+      return Q({ html, label: 'Welk getal hoort op de plek van het vraagteken?', ans: new F(ans),
+        hints: [h1, rule, `De exponent wordt ${kind === 'keer' ? m + ' + ' + n : kind === 'deel' ? m + ' ' + M + ' ' + n : m + ' × ' + n}.`],
+        sol: [{ eq: `exponent: ${kind === 'keer' ? m + ' + ' + n : kind === 'deel' ? m + ' ' + M + ' ' + n : m + ' × ' + n} = ${ans}`, why: rule }],
+        diag: x => x.eq(wrong) && wrong !== ans ? wm : null });
+    }
+    if (type === 'nul') {
+      const a = R(2, 99), zero = Math.random() < .6;
+      return Q({ html: sup(a, zero ? 0 : 1), ans: new F(zero ? 1 : a),
+        hints: [zero ? `Wat is ${sup(a, 3)} : ${sup(a, 3)}? En welke exponent geeft de rekenregel?` : `Exponent 1: hoe vaak staat het getal er?`, zero ? 'Iets gedeeld door zichzelf is altijd 1.' : 'Het getal staat er precies één keer.', zero ? `${sup(a, 0)} = 1` : `${sup(a, 1)} = ${a}`],
+        sol: [{ eq: `= ${zero ? 1 : a}`, why: zero ? 'elk getal (behalve 0) tot de macht 0 is 1' : 'tot de macht 1 = het getal zelf' }],
+        diag: x => zero && x.eq(0) ? `Tot de macht 0 is niet 0, maar 1! Kijk maar: ${sup(a, 3)} : ${sup(a, 3)} = ${sup(a, 0)}, en iets gedeeld door zichzelf is 1.` : null });
+    }
+    if (type === 'negexp') {
+      const b = R(2, 5), e = b > 3 ? R(1, 2) : R(1, 3), v = b ** e, ans = new F(1, v);
+      return Q({ html: sup(b, M + e), ans, tip: 'Typ een breuk met / zoals 1/8',
+        hints: ['Een negatieve exponent maakt het getal níet negatief.', `${sup('a', M + 'n')} = 1 gedeeld door ${sup('a', 'n')}.`, `${sup(b, e)} = ${v}, dus het antwoord is 1 gedeeld door ${v}.`],
+        sol: [{ eq: `= ${fr(1, sup(b, e))}`, why: 'negatieve exponent = 1 gedeeld door' }, { eq: `= ${fr(1, v)}` }],
+        diag: x => x.eq(-v) ? `Een negatieve exponent betekent 1 gedeeld door de macht: ${fr(1, v)}, niet ${M}${v}.` : null });
+    }
+    if (type === 'pyth') {
+      const [a, b, c] = pick([[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17], [9, 12, 15], [12, 16, 20]]);
+      return Q({ html: sqrt(`${sup(a, 2)} + ${sup(b, 2)}`), ans: new F(c),
+        hints: ['Reken eerst uit wat onder de wortel staat.', `${sup(a, 2)} + ${sup(b, 2)} = ${a * a} + ${b * b} = ${c * c}`, `Welk getal keer zichzelf is ${c * c}?`],
+        sol: [{ eq: `= ${sqrt(`${a * a} + ${b * b}`)}`, why: 'eerst de machten' }, { eq: `= ${sqrt(c * c)}` }, { eq: `= ${c}` }],
+        diag: x => x.eq(a + b) ? `${sqrt(`${sup(a, 2)} + ${sup(b, 2)}`)} is niet ${a} + ${b}! Reken eerst uit wat onder de wortel staat.` : null });
+    }
+    const a = R(2, 9), b = R(2, 4), ans = a * a + b ** 3;
+    return Q({ html: `${sup(a, 2)} + ${sup(b, 3)}`, ans: new F(ans),
+      hints: ['Reken elke macht apart uit.', `${sup(a, 2)} = ${a * a}`, `${sup(b, 3)} = ${b ** 3}`],
+      sol: [{ eq: `= ${a * a} + ${b ** 3}`, why: 'machten eerst' }, { eq: `= ${ans}` }],
+      diag: x => x.eq(2 * a + 3 * b) ? 'Een macht is niet hetzelfde als keer de exponent.' : null });
+  },
+  mc() {
+    const a = R(2, 5);
+    if (Math.random() < .5) return { lines: [`${sup(a, 3)} × ${sup(a, 2)}`, `= ${sup(a, 6)}`, `= ${a ** 6}`], wrong: 1, explain: `Bij keer tel je de exponenten op: ${sup(a, 3)} × ${sup(a, 2)} = ${sup(a, 5)} = ${a ** 5}.` };
+    return { lines: [`(${M}${a})<sup>2</sup> + 1`, `= ${M}${a * a} + 1`, `= ${fmt(-a * a + 1)}`], wrong: 1, explain: `(${M}${a})<sup>2</sup> = (${M}${a}) × (${M}${a}) = ${a * a}. Dus ${a * a} + 1 = ${a * a + 1}.` };
+  } },
+
+/* ---------- 5. Formules invullen ---------- */
+{ id: 'form', icon: '🧪', name: 'Formules invullen', sub: 'Letters vervangen door getallen',
+  intro: [
+    { t: 'Invullen', h: `<p>In een formule staan letters. Bij <b>invullen</b> vervang je de letter door een getal en reken je uit.</p><div class="m">${V('y')} = 3${X} + 2, &nbsp; ${X} = 4<br>${V('y')} = 3 · 4 + 2 = 14</div><p>3${X} betekent 3 · ${X} (keer).</p>` },
+    { t: 'Haakjes om negatieve getallen!', h: `<p>Vul je een negatief getal in? Zet het <b>altijd</b> tussen haakjes.</p><div class="m">${V('y')} = ${X}<sup>2</sup>, &nbsp; ${X} = ${M}3<br>${V('y')} = (${M}3)<sup>2</sup> = 9</div><p>Zonder haakjes krijg je ${M}${sup(3, 2)} = ${M}9, en dat is fout.</p>` },
+  ],
+  example: { q: `${V('y')} = ${X}<sup>2</sup> ${M} 4${X}, &nbsp; ${X} = ${M}3`, steps: [
+    { eq: `${V('y')} = (${M}3)<sup>2</sup> ${M} 4 · (${M}3)`, why: 'invullen, met haakjes!' },
+    { eq: `${V('y')} = 9 ${M} (${M}12)`, why: 'macht en keer eerst' },
+    { eq: `${V('y')} = 9 + 12 = 21`, why: 'min min wordt plus' } ] },
+  explain: 'Leg aan een leerling uit waarom je haakjes zet als je een negatief getal invult.',
+  gen(l) {
+    const y = V('y');
+    const type = pick(l === 1 ? ['lin', 'taxi', 'rect'] : l === 2 ? ['linneg', 'kwad', 'linneg'] : ['abc', 'abc', 'kwad']);
+    if (type === 'taxi') {
+      const s = R(2, 5), pr = R(2, 4), k = R(3, 15), ans = pr * k + s, K = V('K'), kk = V('k');
+      return Q({ txt: true, html: `Een taxirit kost €${s} instap plus €${pr} per kilometer:<div class="f" style="text-align:center;margin-top:8px">${K} = ${pr}${kk} + ${s}</div>Wat kost een rit van ${k} km (in euro)?`, ans: new F(ans),
+        hints: [`Vervang ${kk} door ${k}.`, `${K} = ${pr} · ${k} + ${s}`, `${pr} · ${k} = ${pr * k}`],
+        sol: [{ eq: `${K} = ${pr} · ${k} + ${s}`, why: 'invullen' }, { eq: `${K} = ${pr * k} + ${s} = ${ans}`, why: 'keer eerst' }],
+        diag: x => !x.eq(ans) && (x.eq((pr + k) * s) || x.eq(pr * (k + s))) ? LTR : null });
+    }
+    if (type === 'rect') {
+      const L = R(3, 15), B = R(2, 10), ans = 2 * L + 2 * B, P = V('P'), l_ = V('l'), b_ = V('b');
+      return Q({ txt: true, html: `De omtrek van een rechthoek is:<div class="f" style="text-align:center;margin-top:8px">${P} = 2${l_} + 2${b_}</div>Bereken ${P} als ${l_} = ${L} en ${b_} = ${B}.`, ans: new F(ans),
+        hints: ['Vul beide letters in.', `${P} = 2 · ${L} + 2 · ${B}`, `2 · ${L} = ${2 * L} en 2 · ${B} = ${2 * B}`],
+        sol: [{ eq: `${P} = 2 · ${L} + 2 · ${B}`, why: 'invullen' }, { eq: `${P} = ${2 * L} + ${2 * B} = ${ans}` }],
+        diag: x => L * B !== ans && x.eq(L * B) ? 'Dat is de oppervlakte (lengte × breedte). Hier vraagt de formule de omtrek.' : null });
+    }
+    if (type === 'lin' || type === 'linneg') {
+      const a = type === 'lin' ? R(2, 9) : RN(-9, 9), b = RN(-10, 10), x = type === 'lin' ? R(1, 10) : RN(-8, -1), ans = a * x + b;
+      return Q({ txt: true, html: `<div class="f" style="text-align:center">${y} = ${lin(a, b)}</div>Bereken ${y} als ${X} = ${fmt(x)}.`, ans: new F(ans),
+        hints: ['Vervang de letter door het getal. Zet een negatief getal tussen haakjes!', `${y} = ${fmt(a)} · ${p(x)} ${sg(b)}`, `${fmt(a)} · ${p(x)} = ${fmt(a * x)}`],
+        sol: [{ eq: `${y} = ${fmt(a)} · ${p(x)} ${sg(b)}`, why: 'invullen' }, { eq: `${y} = ${fmt(a * x)} ${sg(b)}`, why: 'keer eerst' }, { eq: `${y} = ${fmt(ans)}` }],
+        diag: x2 => ans !== 0 && x2.eq(-ans) ? SIGN_MSG : null });
+    }
+    if (type === 'kwad') {
+      const b = RN(-10, 10), x = RN(-6, -2), ans = x * x + b, wrong = -x * x + b;
+      return Q({ txt: true, html: `<div class="f" style="text-align:center">${y} = ${X}<sup>2</sup> ${sg(b)}</div>Bereken ${y} als ${X} = ${fmt(x)}.`, ans: new F(ans),
+        hints: ['Zet het negatieve getal tussen haakjes!', `${y} = ${p(x)}<sup>2</sup> ${sg(b)}`, `${p(x)}<sup>2</sup> = ${p(x)} × ${p(x)} = ${x * x}`],
+        sol: [{ eq: `${y} = ${p(x)}<sup>2</sup> ${sg(b)}`, why: 'invullen met haakjes' }, { eq: `${y} = ${x * x} ${sg(b)}`, why: 'min keer min is plus' }, { eq: `${y} = ${fmt(ans)}` }],
+        diag: x2 => x2.eq(wrong) ? `Haakjes vergeten! ${p(x)}<sup>2</sup> = ${x * x}, niet ${M}${x * x}.` : null });
+    }
+    // a x^2 + b x + c
+    const a = pick([1, 1, 2, 3, -1]), b = RN(-6, 6), c = R(-9, 9), x = RN(-4, 4), ans = a * x * x + b * x + c, wrong = a * (x < 0 ? -x * x : x * x) + b * x + c;
+    const ax2 = a === 1 ? `${X}<sup>2</sup>` : a === -1 ? `${M}${X}<sup>2</sup>` : `${a}${X}<sup>2</sup>`;
+    const bx = b === 1 ? `+ ${X}` : b === -1 ? `${M} ${X}` : `${sg(b)}${X}`;
+    const cc = c === 0 ? '' : ' ' + sg(c);
+    const sub1 = `${a === 1 ? '' : a === -1 ? M : a + ' · '}${p(x)}<sup>2</sup> ${b < 0 ? M : '+'} ${Math.abs(b)} · ${p(x)}${cc}`;
+    return Q({ txt: true, html: `<div class="f" style="text-align:center">${y} = ${ax2} ${bx}${cc}</div>Bereken ${y} als ${X} = ${fmt(x)}.`, ans: new F(ans),
+      hints: ['Vul in met haakjes, en reken dan in de goede volgorde: macht, keer, plus/min.', `${y} = ${sub1}`, `${p(x)}<sup>2</sup> = ${x * x}`],
+      sol: [{ eq: `${y} = ${sub1}`, why: 'invullen met haakjes' }, { eq: `${y} = ${fmt(a * x * x)} ${sg(b * x)}${cc}`, why: 'macht en keer eerst' }, { eq: `${y} = ${fmt(ans)}` }],
+      diag: x2 => x < 0 && wrong !== ans && x2.eq(wrong) ? `Let op: ${p(x)}<sup>2</sup> = ${x * x}. Haakjes om negatieve getallen!` : (ans !== 0 && x2.eq(-ans) ? SIGN_MSG : null) });
+  },
+  mc() {
+    const a = R(2, 6), c = R(1, 9);
+    return { lines: [`${V('y')} = ${X}<sup>2</sup> + ${c}, met ${X} = ${M}${a}`, `${V('y')} = ${M}${sup(a, 2)} + ${c}`, `${V('y')} = ${M}${a * a} + ${c}`, `${V('y')} = ${fmt(-a * a + c)}`], wrong: 1,
+      explain: `Bij invullen moet ${M}${a} tussen haakjes: (${M}${a})<sup>2</sup> = ${a * a}. Antwoord: ${a * a + c}.` };
+  } },
+
+/* ---------- 6. Vergelijkingen ---------- */
+{ id: 'verg', icon: '⚖️', name: 'Vergelijkingen', sub: 'De balansmethode', tip: 'Typ alleen het getal voor x',
+  intro: [
+    { t: 'De balans', h: `<p>Een vergelijking is een balans: links en rechts zijn evenveel waard. Wat je links doet, doe je <b>ook rechts</b>. Dan blijft de balans in evenwicht.</p><div class="m">${X} + 5 = 12<br><small>beide kanten ${M} 5</small><br>${X} = 7</div>` },
+    { t: 'Stappenplan', h: `<ol><li>Haakjes wegwerken (als die er zijn)</li><li>Alle ${X}'en naar één kant</li><li>Alle getallen naar de andere kant</li><li>Delen door het getal vóór ${X}</li><li><b>Controleren:</b> vul je antwoord in!</li></ol>` },
+  ],
+  example: { q: `5${X} ${M} 3 = 2${X} + 9`, steps: [
+    { eq: `3${X} ${M} 3 = 9`, why: `beide kanten ${M} 2${X}` },
+    { eq: `3${X} = 12`, why: 'beide kanten + 3' },
+    { eq: `${X} = 4`, why: 'beide kanten : 3' },
+    { eq: 'Controle: 5·4 − 3 = 17 en 2·4 + 9 = 17 ✓', why: 'links = rechts, dus goed!' } ] },
+  explain: 'Leg aan een leerling uit wat de balansmethode is en waarom het werkt.',
+  gen(l) {
+    const type = pick(l === 1 ? ['plus', 'keer', 'axb'] : l === 2 ? ['axb', 'beide', 'beide'] : ['haakjes', 'haakbeide', 'beide', 'breuk']);
+    let a, b, c = 0, d, s, pre = [], html, lhsVal;
+    if (type === 'plus') { a = 1; b = R(1, 15); s = R(1, 20); d = s + b; html = `${lin(1, b)} = ${d}`; }
+    else if (type === 'keer') { a = R(2, 9); b = 0; s = R(1, 12); d = a * s; html = `${lin(a, 0)} = ${d}`; }
+    else if (type === 'axb' || type === 'breuk') {
+      a = R(2, 9); b = l === 1 ? R(1, 15) : RN(-15, 15);
+      if (type === 'breuk') { do { d = RN(-20, 20); } while ((d - b) % a === 0); } else { s = l === 1 ? R(1, 10) : RN(-10, 10); d = a * s + b; }
+      html = `${lin(a, b)} = ${fmt(d)}`;
+    }
+    else if (type === 'beide') { do { a = RN(-9, 9); c = RN(-9, 9); } while (a === c); s = RN(-8, 8); b = RN(-12, 12); d = (a - c) * s + b; html = `${lin(a, b)} = ${lin(c, d)}`; }
+    else {
+      const k = R(2, 6), m = RN(-8, 8); s = RN(-8, 8);
+      if (type === 'haakjes') { c = 0; d = k * (s + m); html = `${k}(${lin(1, m)}) = ${fmt(d)}`; }
+      else { do { c = RN(-5, 5); } while (c === k); d = k * s + k * m - c * s; html = `${k}(${lin(1, m)}) = ${lin(c, d)}`; }
+      a = k; b = k * m;
+      pre.push({ eq: `${lin(a, b)} = ${lin(c, d)}`, why: `haakjes wegwerken: ${k} · ${X} en ${k} · ${p(m)}` });
+      lhsVal = () => k * (s + m);
+      var forgot = new F(d - m, a - c); // b niet met k vermenigvuldigd
+    }
+    // balansmethode
+    const steps = [...pre]; let A = a, B = b, C = c, D = d;
+    if (C !== 0) { steps.push({ eq: `${lin(A - C, B)} = ${fmt(D)}`, why: `beide kanten ${C > 0 ? M + ' ' + lin(C, 0) : '+ ' + lin(-C, 0)}` }); A -= C; C = 0; }
+    if (B !== 0) { steps.push({ eq: `${lin(A, 0)} = ${fmt(D - B)}`, why: `beide kanten ${B > 0 ? M + ' ' + B : '+ ' + (-B)}` }); D -= B; B = 0; }
+    const ans = new F(D, A);
+    if (A !== 1) steps.push({ eq: `${X} = ${frF(ans)}`, why: `beide kanten : ${p(A)}` });
+    if (ans.d === 1) { const sv = ans.n, L = lhsVal ? lhsVal() : a * sv + b, Rv = c * sv + d; steps.push({ eq: `Controle: links ${fmt(L)}, rechts ${fmt(Rv)} ✓`, why: `vul ${X} = ${fmt(sv)} in` }); }
+    const first = steps[0];
+    const wrongSign = new F(d - c * 0 + b, a - c);  // getal met verkeerd teken verplaatst
+    return Q({ html, ans, label: `Los op: wat is ${X}?`, tip: type === 'breuk' ? 'Het antwoord is een breuk: typ bijv. 7/3' : undefined,
+      hints: ['Balansmethode: wat je links doet, doe je ook rechts. Werk eerst naar één ' + X + ' toe.', `Eerste stap: ${first.why}.`, `Na de eerste stap staat er: ${first.eq}`],
+      sol: steps,
+      diag: x => {
+        if (typeof forgot !== 'undefined' && x.eq(forgot) && !forgot.eq(ans)) return 'Bij haakjes wegwerken moet je élk getal binnen de haakjes vermenigvuldigen.';
+        if (b !== 0 && x.eq(wrongSign) && !wrongSign.eq(ans)) return `Let op het teken! Als je ${sg(b)} weghaalt, doe je aan beide kanten het tegenovergestelde: ${b > 0 ? M + ' ' + b : '+ ' + (-b)}.`;
+        if (!ans.eq(0) && x.eq(new F(-ans.n, ans.d))) return SIGN_MSG + ' Controleer je antwoord door het in te vullen.';
+        return null; } });
+  },
+  mc() {
+    const a = R(2, 6), s = R(2, 9), b = R(2, 12), c = a * s + b;
+    if (Math.random() < .5) return { lines: [`${lin(a, b)} = ${c}`, `${lin(a, 0)} = ${c + b}`, `${X} = ${frF(new F(c + b, a))}`], wrong: 1,
+      explain: `Je moet aan beide kanten ${M} ${b} doen: ${a}${X} = ${c - b}, dus ${X} = ${s}.` };
+    return { lines: [`${lin(a, b)} = ${c}`, `${lin(a, 0)} = ${c - b}`, `${X} = ${c - b - a}`], wrong: 2,
+      explain: `${a}${X} betekent ${a} keer ${X}. Dan moet je dus delen door ${a}, niet ${a} aftrekken: ${X} = ${c - b} : ${a} = ${s}.` };
+  } },
+
+/* ---------- Eindbaas ---------- */
+{ id: 'baas', icon: '👑', name: 'Eindbaas Lijn 0', sub: '8 pittige vragen, 6 goed = verslagen', boss: true },
+];
+
+const FUTURE = [
+  ['l1', 1, 'Algebra', 'haakjes, ontbinden, abc-formule'],
+  ['l2', 2, 'Functies en grafieken', 'lijnen, parabolen, verschuiven'],
+  ['l3', 3, 'Exponentieel en log', 'groei, logaritmen'],
+  ['l4', 4, 'Goniometrie', 'sin, cos, eenheidscirkel'],
+  ['l5', 5, 'Veranderingen', 'afgeleide, raaklijn, extremen'],
+  ['l6', 6, 'Meetkunde', 'lijnen, afstanden, cirkels'],
+];
+</script>
+
+<script id="ui">
+/* ============ Opslag ============ */
+const STORE = 'wiskundelijn-v1';
+function load() { try { const s = localStorage.getItem(STORE); if (s) return JSON.parse(s); } catch (e) {} return null; }
+function save() { try { localStorage.setItem(STORE, JSON.stringify(st)); } catch (e) {} }
+let st = Object.assign({ xp: 0, streak: { count: 0, last: null, tickets: 1, week: null }, s: {}, best: { sprint: 0 }, notes: {}, bossWon: false }, load() || {});
+const ss = id => st.s[id] || (st.s[id] = { m: 0, last: 0, n: 0, ok: 0, open: false });
+const byId = id => STATIONS.find(s => s.id === id);
+const lvlOf = m => m < 35 ? 1 : m < 70 ? 2 : 3;
+
+/* ============ Tijd & reeks ============ */
+const today = () => new Date().toLocaleDateString('sv');
+const dayDiff = (a, b) => Math.round((new Date(b) - new Date(a)) / 864e5);
+function weekKey() { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7); const w1 = new Date(d.getFullYear(), 0, 4); return d.getFullYear() + '-' + (1 + Math.round(((d - w1) / 864e5 - 3 + (w1.getDay() + 6) % 7) / 7)); }
+function streakNow() { const S = st.streak; if (!S.last) return 0; const g = dayDiff(S.last, today()); if (g <= 1) return S.count; if (g === 2 && (S.week !== weekKey() || S.tickets > 0)) return S.count; return 0; }
+function touchStreak() {
+  const S = st.streak, t = today(), wk = weekKey();
+  if (S.week !== wk) { S.week = wk; S.tickets = 1; }
+  if (S.last === t) return;
+  const g = S.last ? dayDiff(S.last, t) : null;
+  if (g === 1) S.count++;
+  else if (g === 2 && S.tickets > 0) { S.tickets--; S.count++; toast('🎫 Vertragingskaartje gebruikt: je reeks blijft staan!'); }
+  else S.count = 1;
+  S.last = t;
+  if (S.count > 1) toast(`🔥 ${S.count} dagen op rij!`);
+}
+
+/* ============ XP & rangen ============ */
+const RANKS = [['Reiziger', 0], ['Conducteur', 300], ['Machinist', 1000], ['Stationschef', 2500], ['Leraar', 5000]];
+function rankInfo() { let i = 0; RANKS.forEach((r, j) => { if (st.xp >= r[1]) i = j; }); const cur = RANKS[i], nx = RANKS[i + 1]; return { name: cur[0], next: nx, pct: nx ? Math.round((st.xp - cur[1]) / (nx[1] - cur[1]) * 100) : 100 }; }
+function addXP(n) { const before = rankInfo().name; st.xp += n; if (S) S.xp += n; const after = rankInfo().name; if (after !== before) setTimeout(() => toast(`🎉 Promotie! Je bent nu ${after}`), 900); save(); }
+
+/* ============ Status stations ============ */
+const LEARN = STATIONS.filter(s => !s.boss);
+function unlocked(i) { const s = STATIONS[i]; if (s.boss) return LEARN.every(x => ss(x.id).m >= 60); return i === 0 || ss(s.id).open || ss(STATIONS[i - 1].id).m >= 60; }
+function needsReview(id) { const s = ss(id); if (s.m < 60 || !s.last) return false; const days = (Date.now() - s.last) / 864e5; return days > (s.m >= 90 ? 7 : s.m >= 80 ? 4 : 2); }
+function updM(id, ok, hints, lv) { const s = ss(id); s.n++; s.last = Date.now(); if (ok) { s.ok++; s.m = Math.min(100, s.m + (hints ? 3 : 4 + lv * 2)); } else s.m = Math.max(0, s.m - 5); }
+
+/* ============ Hulp ============ */
+const app = document.getElementById('app');
+let VIEW = { name: 'home' }, S = null, timerId = null;
+function go(v) { VIEW = v; render(); window.scrollTo(0, 0); }
+function render() { app.innerHTML = VIEWS[VIEW.name](); }
+let toastT;
+function toast(msg) { const t = document.getElementById('toast'); t.innerHTML = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2400); }
+const PRAISE = ['Goed zo!', 'Top!', 'Lekker bezig!', 'Precies!', 'Helemaal goed!', 'Knap!', 'Yes!', 'Volgende station!'];
+const back = (a = 'home') => `<button class="back" data-a="${a}" aria-label="Terug">←</button>`;
+
+/* ============ Views ============ */
+const VIEWS = {
+home() {
+  const r = rankInfo(), streak = streakNow(), tickets = st.streak.week === weekKey() ? st.streak.tickets : 1;
+  return `
+  <header class="top"><div class="brand"><span class="logo">∑</span>Wiskunde Lijn</div><div class="pill" title="Dagen op rij">🔥 ${streak}${tickets ? ' · 🎫' : ''}</div></header>
+  <section class="card"><div class="rk"><b>${r.name}</b><span>${st.xp} XP</span></div><div class="bar"><i style="width:${r.pct}%"></i></div>
+    <small>${r.next ? `Nog ${r.next[1] - st.xp} XP tot ${r.next[0]}` : 'Hoogste rang bereikt!'}</small></section>
+  <div class="actions">
+    <button class="btn big" data-a="ritpick">🚆 Start treinrit<small>Een slimme mix van wat jij nu nodig hebt</small></button>
+    <div class="row"><button class="btn sec" data-a="sprint">⚡ Sprint<small>Record: ${st.best.sprint}</small></button>
+    <button class="btn sec" data-a="notes">📓 Notitieboek<small>${Object.values(st.notes).filter(Boolean).length} uitleg</small></button></div>
+  </div>
+  <h2 class="line-title"><span class="ln l0">0</span>Lijn 0 · Basis</h2>
+  <ol class="map">${STATIONS.map((s, i) => stationRow(s, i)).join('')}</ol>
+  <div class="future">${FUTURE.map(f => `<div class="fl"><span class="ln ${f[0]}">${f[1]}</span><div>Lijn ${f[1]} · ${f[2]}<br><small>${f[3]}: binnenkort</small></div></div>`).join('')}</div>
+  <p class="foot">Eindbestemming: HAVO wiskunde B 🎓</p>`;
+},
+station() {
+  const s = byId(VIEW.id), tab = VIEW.tab || 'uitleg';
+  if (s.boss) return `<div class="hdr">${back()}<h1>${s.icon} ${s.name}</h1></div>
+    <div class="card ex"><h3>De laatste halte van Lijn 0</h3><p>Je krijgt 8 vragen op het hoogste niveau, uit alle stations door elkaar. Heb je er 6 of meer goed? Dan heb je de eindbaas verslagen en is Lijn 0 klaar.</p>${st.bossWon ? '<p>👑 Je hebt hem al eens verslagen. Lukt het nog een keer?</p>' : ''}</div>
+    <button class="btn big" data-a="boss">Uitdaging aannemen</button>`;
+  const m = ss(s.id).m;
+  let body = '';
+  if (tab === 'uitleg') body = s.intro.map(c => `<div class="card ex"><h3>${c.t}</h3>${c.h}</div>`).join('') + `<button class="btn" data-a="tab" data-arg="voorbeeld">Bekijk een voorbeeld →</button>`;
+  else {
+    const n = VIEW.step || 0, ex = s.example;
+    body = `<div class="card"><div class="lbl" style="color:var(--muted);font-size:14px">Voorbeeld</div><div style="font-size:24px;font-weight:700;margin:6px 0">${ex.q}</div>
+      <div class="steps">${ex.steps.slice(0, n).map(x => `<div class="stp">${x.eq}<span class="why">${x.why}</span></div>`).join('')}</div></div>
+      ${n < ex.steps.length ? `<button class="btn sec" data-a="step">Volgende stap (${n + 1}/${ex.steps.length})</button>` : `<button class="btn" data-a="practice" data-arg="${s.id}">Zelf oefenen →</button>`}`;
+  }
+  return `<div class="hdr">${back()}<h1>${s.icon} ${s.name}</h1></div>
+    <div class="card" style="padding:12px 16px"><div class="rk" style="margin:0 0 6px"><span>Beheersing</span><b style="font-size:16px">${m}%</b></div><div class="bar"><i style="width:${m}%;background:var(--green)"></i></div></div>
+    <div class="tabs"><button class="${tab === 'uitleg' ? 'on' : ''}" data-a="tab" data-arg="uitleg">Uitleg</button><button class="${tab === 'voorbeeld' ? 'on' : ''}" data-a="tab" data-arg="voorbeeld">Voorbeeld</button><button data-a="practice" data-arg="${s.id}">Oefenen</button></div>
+    ${body}`;
+},
+practice() {
+  const q = S.q, st_ = byId(S.cur);
+  let head;
+  if (S.mode === 'rit' || S.mode === 'sprint') head = `<div class="mid"><b class="timer" id="timer">${timeLeft()}</b><small>${S.mode === 'sprint' ? 'Sprint · ' + S.correct + ' goed' : st_.icon + ' ' + st_.name}</small></div>`;
+  else if (S.mode === 'boss') head = `<div class="mid"><b>👑 Eindbaas · vraag ${S.count + 1}/8</b><div class="prog"><i style="width:${S.count / 8 * 100}%"></i></div></div>`;
+  else head = `<div class="mid"><b>${st_.icon} ${st_.name}</b><div class="prog"><i style="width:${ss(S.cur).m}%"></i></div></div>`;
+  const top = `<div class="ph"><button class="back" data-a="stop" aria-label="Stoppen">✕</button>${head}<span class="pill">⭐ ${S.xp}</span></div>`;
+  if (q.kind === 'mc') return top + mcView(q);
+  const ansCls = S.phase === 'done' ? (S.lastOk ? 'ok' : 'bad') : (S.flash || '');
+  const tip = q.tip || st_.tip;
+  return top + `
+  <div class="qcard"><div class="lbl">${q.label || (q.txt ? 'Opgave' : 'Reken uit')}</div>
+    <div class="q ${q.txt ? 'txt' : ''}">${q.html}</div>
+    ${tip ? `<div class="tip">${tip}</div>` : ''}
+    <div class="ans ${S.input ? '' : 'empty'} ${ansCls}" id="ans">${S.input.replace(/-/g, M)}</div></div>
+  ${S.hints.map((h, i) => `<div class="hint">💡 ${h}</div>`).join('')}
+  ${S.phase === 'ask' ? `
+    ${S.mode !== 'sprint' ? `<div class="tools"><button data-a="hint" ${S.hints.length >= 3 ? 'disabled' : ''}>💡 Hint ${S.hints.length}/3</button><button data-a="pad">✏️ Kladblok</button></div>` : ''}
+    <div class="pad">${['7', '8', '9', '⌫', '4', '5', '6', '/', '1', '2', '3', '−', ',', '0', 'C', 'OK'].map(k => `<button data-a="key" data-arg="${k}" class="${k === 'OK' ? 'ok' : /[⌫\/−,C]/.test(k) ? 'op' : ''}">${k}</button>`).join('')}</div>` : feedbackView()}`;
+},
+ritpick() {
+  return `<div class="hdr">${back()}<h1>🚆 Treinrit</h1></div>
+    <div class="card"><p style="margin-top:0">Hoe lang duurt je rit? De app kiest zelf de vragen: vooral wat je nog lastig vindt, plus herhaling van wat je al kunt.</p>
+    <div class="choice">${[5, 10, 15, 20].map(m => `<button class="btn sec" data-a="rit" data-arg="${m}">${m} min</button>`).join('')}</div>
+    <div class="row"><button class="btn sec" data-a="rit" data-arg="0">Tot ik uitstap (geen timer)</button></div></div>`;
+},
+summary() {
+  const r = VIEW.res;
+  return `<div class="hdr">${back()}<h1>${r.title}</h1></div>
+    <div class="card" style="text-align:center">${r.big ? `<div class="big-num">${r.big}</div>` : ''}<p>${r.msg}</p>
+    <div class="stats"><div><b>${r.n}</b><small>vragen</small></div><div><b>${r.ok}</b><small>goed</small></div><div><b>+${r.xp}</b><small>XP</small></div></div></div>
+    <div class="card"><b>🔥 ${streakNow()} ${streakNow() === 1 ? 'dag' : 'dagen'} op rij</b><br><small>Kom morgen terug om je reeks vast te houden.</small></div>
+    <button class="btn" data-a="home">Terug naar de kaart</button>`;
+},
+explain() {
+  const s = byId(VIEW.id);
+  return `<div class="hdr"><h1>👩‍🏫 Jij bent de leraar</h1></div>
+    <div class="card ex"><h3>${s.icon} ${s.name}: je beheerst dit station!</h3><p>Een goede leraar kan het simpel uitleggen. Probeer het:</p><p><b>${s.explain}</b></p>
+    <textarea id="expl" placeholder="Schrijf het op alsof je het aan een leerling uit de tweede klas vertelt…">${st.notes[s.id] || ''}</textarea></div>
+    <button class="btn" data-a="saveExplain">Opslaan in notitieboek (+30 XP)</button>
+    <div class="row"><button class="btn ghost" data-a="skipExplain">Later</button></div>`;
+},
+notes() {
+  return `<div class="hdr">${back()}<h1>📓 Notitieboek</h1></div>
+    <p style="color:var(--muted)">Jouw eigen uitleg per onderwerp. Dit wordt later je lesmateriaal!</p>
+    ${LEARN.map(s => `<div class="card ex"><h3>${s.icon} ${s.name}</h3><p><small>${s.explain}</small></p>
+      <textarea data-note="${s.id}" placeholder="${ss(s.id).m >= 80 ? 'Schrijf hier je uitleg…' : 'Beheers dit station eerst (80%), maar je mag nu al schrijven.'}">${st.notes[s.id] || ''}</textarea>
+      <div class="row"><button class="btn sec" data-a="saveNote" data-arg="${s.id}">Opslaan</button></div></div>`).join('')}`;
+},
+};
+
+function stationRow(s, i) {
+  const open = unlocked(i), m = s.boss ? (st.bossWon ? 100 : 0) : ss(s.id).m, done = s.boss ? st.bossWon : m >= 80, rev = !s.boss && needsReview(s.id);
+  const tag = !open ? '<span class="tag">🔒</span>' : rev ? '<span class="tag rev">🔁 herhalen</span>' : done ? `<span class="tag ok">${s.boss ? '👑' : '✓'}</span>` : '';
+  return `<li class="${open ? '' : 'locked'} ${done ? 'done' : ''}"><span class="node"></span>
+    <button class="st" data-a="open" data-arg="${s.id}"><span class="ic">${s.icon}</span><span class="nm"><b>${s.name}</b><small>${s.sub}</small>
+    ${!s.boss && open ? `<span class="meter"><i style="width:${m}%"></i></span>` : ''}</span>${tag}</button></li>`;
+}
+function feedbackView() {
+  const q = S.q;
+  const solHtml = `<div class="sol"><div>${q.html}</div>${q.sol.map(x => `<div>${x.eq}${x.why ? `<span class="why">${x.why}</span>` : ''}</div>`).join('')}</div>`;
+  if (S.phase === 'wrong1') return `<div class="fb meh"><h3>Nog niet helemaal 🤔</h3><p>${S.msg || 'Probeer het nog een keer. Gebruik eventueel een hint.'}</p>
+    <div class="row"><button class="btn" data-a="retry">Opnieuw</button><button class="btn sec" data-a="showSol">Uitwerking</button></div></div>`;
+  if (S.lastOk) return `<div class="fb good"><h3>✅ ${S.praise}</h3>${S.msg ? `<p>${S.msg}</p>` : ''}<p>+${S.gained} XP${S.hintsUsed ? ' (met hint)' : ''}</p>
+    ${S.showSol ? solHtml : ''}<div class="row">${S.showSol ? '' : '<button class="btn sec" data-a="toggleSol">Uitwerking</button>'}<button class="btn" data-a="next">Volgende →</button></div></div>`;
+  return `<div class="fb bad"><h3>Helaas: het antwoord is ${frF(q.ans)}</h3>${S.msg ? `<p>${S.msg}</p>` : ''}${solHtml}
+    <p><small>Geen zorgen: deze vraag komt later terug.</small></p><div class="row"><button class="btn" data-a="next">Volgende →</button></div></div>`;
+}
+function mcView(q) {
+  const done = S.phase === 'done';
+  return `<div class="qcard" style="text-align:left"><div class="lbl">🔍 Vind de fout</div><div class="q txt">Een leerling heeft deze som gemaakt. In welke regel zit de fout?</div>
+    <div class="mc">${q.lines.map((l, i) => `<button ${i === 0 ? '' : `data-a="mc" data-arg="${i}"`} class="${i === 0 ? 'first' : ''} ${done && i === q.wrong ? 'right' : ''} ${done && i === S.mcPick && i !== q.wrong ? 'wrong' : ''}" ${done || i === 0 ? 'disabled' : ''}>${l}</button>`).join('')}</div></div>
+    ${done ? `<div class="fb ${S.lastOk ? 'good' : 'bad'}"><h3>${S.lastOk ? '✅ Scherp gezien, meester!' : 'Net niet: de fout zit in de groene regel'}</h3><p>${q.explain}</p>${S.lastOk ? `<p>+${S.gained} XP</p>` : ''}<div class="row"><button class="btn" data-a="next">Volgende →</button></div></div>` : '<p style="color:var(--muted);text-align:center">Tik op de foute regel. Zo train je je leraarsoog 👀</p>'}`;
+}
+
+/* ============ Sessies ============ */
+function newSession(mode, extra = {}) { S = Object.assign({ mode, count: 0, correct: 0, xp: 0, touched: new Set(), prompted: false }, extra); nextQ(); go({ name: 'practice' }); startTimer(); }
+function chooseStation() {
+  const opts = LEARN.filter((s, i) => unlocked(i));
+  const w = opts.map(s => { const x = ss(s.id); return (100 - x.m) + (needsReview(s.id) ? 60 : 0) + 15; });
+  let r = Math.random() * w.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < opts.length; i++) { r -= w[i]; if (r <= 0) return opts[i].id; }
+  return opts[0].id;
+}
+function nextQ() {
+  let id;
+  if (S.mode === 'station') id = S.station;
+  else if (S.mode === 'rit') id = chooseStation();
+  else if (S.mode === 'sprint') id = pick(['neg', 'volg', 'macht']);
+  else id = LEARN[S.count % LEARN.length].id;
+  S.cur = id;
+  const s = byId(id), m = ss(id).m;
+  const lv = S.mode === 'boss' ? 3 : S.mode === 'sprint' ? 1 : lvlOf(m);
+  const useMc = S.mode !== 'sprint' && S.mode !== 'boss' && s.mc && m >= 25 && Math.random() < .17;
+  S.q = useMc ? Object.assign({ kind: 'mc' }, s.mc()) : s.gen(lv);
+  S.lv = lv; S.input = ''; S.hints = []; S.hintsUsed = 0; S.attempts = 0; S.phase = 'ask'; S.msg = ''; S.showSol = false; S.flash = ''; S.mcPick = -1;
+  padReset();
+}
+function finishQ(ok) {
+  S.phase = 'done'; S.lastOk = ok; S.count++; S.touched.add(S.cur);
+  if (ok) S.correct++;
+  if (S.mode !== 'sprint') updM(S.cur, ok, S.hintsUsed > 0, S.lv);
+  if (ok) { touchStreak(); S.gained = S.q.kind === 'mc' ? 15 : S.hintsUsed ? 4 : 6 + S.lv * 3; addXP(S.gained); S.praise = pick(PRAISE); }
+  save();
+}
+function submit() {
+  if (S.phase !== 'ask' || !S.input) return;
+  const x = parseAns(S.input);
+  if (!x) { toast('Typ een getal zoals −3, 2,5 of 3/4'); return; }
+  const q = S.q;
+  let res = q.check ? q.check(S.input, x) : { ok: x.eq(q.ans) };
+  if (S.mode === 'sprint') {
+    if (res.ok) { S.correct++; S.xp += 2; st.xp += 2; flash('ok'); } else { flash('bad'); toast(`Was ${frF(q.ans)}`); }
+    S.count++; nextQ(); render(); return;
+  }
+  if (res.ok) { S.msg = res.msg || ''; finishQ(true); }
+  else if (res.soft) { S.msg = ''; toast(res.msg); return; }
+  else {
+    S.msg = res.msg || q.diag(x) || '';
+    S.attempts++;
+    if (S.attempts === 1) { S.phase = 'wrong1'; S.flash = 'bad'; }
+    else finishQ(false);
+  }
+  render();
+}
+function flash(c) { S.flash = c; }
+function timeLeft() { if (!S.end) return S.mode === 'rit' ? '∞ vrije rit' : ''; const t = Math.max(0, Math.ceil((S.end - Date.now()) / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; }
+function startTimer() {
+  clearInterval(timerId);
+  if (!S.end) return;
+  timerId = setInterval(() => {
+    const el = document.getElementById('timer'); if (el) el.textContent = timeLeft();
+    if (Date.now() >= S.end) { if (S.mode === 'sprint') { clearInterval(timerId); endSession(); } else if (el) el.textContent = '🏁 laatste vraag'; }
+  }, 500);
+}
+function endSession() {
+  clearInterval(timerId); padClose();
+  const s = S; let res;
+  if (s.mode === 'sprint') {
+    const rec = s.correct > st.best.sprint; if (rec) st.best.sprint = s.correct; if (s.correct) touchStreak();
+    res = { title: '⚡ Sprint klaar', big: s.correct, msg: rec ? '🏆 Nieuw record!' : `Je record is ${st.best.sprint}.`, n: s.count, ok: s.correct, xp: s.xp };
+  } else if (s.mode === 'boss') {
+    const won = s.correct >= 6; if (won && !st.bossWon) { st.bossWon = true; addXP(200); }
+    res = { title: won ? '👑 Eindbaas verslagen!' : 'Eindbaas wint deze keer', big: `${s.correct}/8`, msg: won ? 'Lijn 0 is klaar! Je basis staat. Op naar Lijn 1.' : 'Oefen de stations met 🔁 of een lage score, en probeer het opnieuw.', n: s.count, ok: s.correct, xp: s.xp };
+  } else {
+    if (s.mode === 'rit' && s.count >= 3) { const bonus = s.mins ? s.mins * 3 : 10; addXP(bonus); }
+    res = { title: s.mode === 'rit' ? '🚉 Eindstation bereikt' : 'Goed gewerkt!', msg: s.count ? `Je hebt ${s.correct} van de ${s.count} goed. ${s.correct / Math.max(1, s.count) >= .8 ? 'Sterk!' : 'Elke fout is een les. Blijf rijden!'}` : 'Volgende keer een paar vragen meer?', n: s.count, ok: s.correct, xp: s.xp };
+  }
+  save(); S = null; go({ name: 'summary', res });
+}
+
+/* ============ Kladblok ============ */
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d'); let drawing = false, padDirty = false;
+function padOpen() {
+  document.getElementById('scratchQ').innerHTML = S && S.q.html ? S.q.html : '';
+  const sc = document.getElementById('scratch'); sc.hidden = false;
+  const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(r.width * dpr) || cv.height !== Math.round(r.height * dpr)) {
+    const img = padDirty ? cv.toDataURL() : null;
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (img) { const im = new Image(); im.onload = () => ctx.drawImage(im, 0, 0, r.width, r.height); im.src = img; }
+  }
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 3; ctx.strokeStyle = '#ffd166';
+}
+function padClose() { document.getElementById('scratch').hidden = true; }
+function padReset() { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); const dpr = window.devicePixelRatio || 1; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); padDirty = false; }
+const pt = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+cv.addEventListener('pointerdown', e => { drawing = true; padDirty = true; cv.setPointerCapture(e.pointerId); const [x, y] = pt(e); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + .1, y + .1); ctx.stroke(); });
+cv.addEventListener('pointermove', e => { if (!drawing) return; const [x, y] = pt(e); ctx.lineTo(x, y); ctx.stroke(); });
+['pointerup', 'pointercancel', 'pointerleave'].forEach(t => cv.addEventListener(t, () => { drawing = false; }));
+
+/* ============ Acties ============ */
+const ACT = {
+  home() { clearInterval(timerId); S = null; go({ name: 'home' }); },
+  open(id) {
+    const i = STATIONS.findIndex(s => s.id === id);
+    if (!unlocked(i)) {
+      if (STATIONS[i].boss) { toast('Haal eerst minstens 60% op alle stations'); return; }
+      if (VIEW.confirm === id) { ss(id).open = true; save(); go({ name: 'station', id }); return; }
+      VIEW.confirm = id; toast('🔒 Haal eerst 60% op het vorige station. Tik nog een keer om toch te openen.'); return;
+    }
+    go({ name: 'station', id });
+  },
+  tab(t) { go({ name: 'station', id: VIEW.id, tab: t, step: 0 }); },
+  step() { VIEW.step = (VIEW.step || 0) + 1; render(); },
+  practice(id) { newSession('station', { station: id }); },
+  ritpick() { go({ name: 'ritpick' }); },
+  rit(m) { m = +m; newSession('rit', { mins: m, end: m ? Date.now() + m * 60000 : 0 }); },
+  sprint() { newSession('sprint', { end: Date.now() + 60000 }); },
+  boss() { newSession('boss'); },
+  notes() { go({ name: 'notes' }); },
+  key(k) {
+    if (!S || S.phase !== 'ask') return;
+    if (k === 'OK') return submit();
+    if (k === '⌫') S.input = S.input.slice(0, -1);
+    else if (k === 'C') S.input = '';
+    else if (S.input.length < 12) S.input += k === '−' ? '-' : k;
+    S.flash = '';
+    const el = document.getElementById('ans');
+    if (el) { el.textContent = S.input.replace(/-/g, M); el.className = 'ans' + (S.input ? '' : ' empty'); }
+  },
+  hint() { if (S.hints.length < 3) { S.hints.push(S.q.hints[S.hints.length]); S.hintsUsed++; render(); } },
+  pad() { padOpen(); },
+  padClose() { padClose(); },
+  padClear() { padReset(); },
+  retry() { S.phase = 'ask'; S.input = ''; S.flash = ''; render(); },
+  showSol() { finishQ(false); render(); },
+  toggleSol() { S.showSol = true; render(); },
+  mc(i) { i = +i; S.mcPick = i; finishQ(i === S.q.wrong); render(); },
+  next() {
+    if (S.mode === 'boss' && S.count >= 8) return endSession();
+    if (S.mode === 'rit' && S.end && Date.now() >= S.end) return endSession();
+    if (S.mode === 'station' && !S.prompted && ss(S.cur).m >= 80 && !st.notes[S.cur]) { S.prompted = true; go({ name: 'explain', id: S.cur }); return; }
+    nextQ(); go({ name: 'practice' });
+  },
+  stop() { if (S && S.count > 0) endSession(); else ACT.home(); },
+  saveExplain() { const v = document.getElementById('expl').value.trim(); if (v) { const first = !st.notes[VIEW.id]; st.notes[VIEW.id] = v; if (first) addXP(30); save(); toast('📓 Opgeslagen in je notitieboek'); } ACT.skipExplain(); },
+  skipExplain() { if (S) { nextQ(); go({ name: 'practice' }); } else go({ name: 'home' }); },
+  saveNote(id) { const el = document.querySelector(`[data-note="${id}"]`); const v = el.value.trim(); const first = v && !st.notes[id]; st.notes[id] = v; if (first && ss(id).m >= 80) addXP(30); save(); toast('📓 Opgeslagen'); },
+};
+document.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = ACT[el.dataset.a]; if (f) f(el.dataset.arg, el); });
+document.addEventListener('keydown', e => {
+  if (VIEW.name !== 'practice' || !S || e.target.tagName === 'TEXTAREA') return;
+  if (S.phase === 'ask' && S.q.kind !== 'mc') {
+    if (/^[0-9]$/.test(e.key)) ACT.key(e.key);
+    else if (e.key === '-') ACT.key('−');
+    else if (e.key === '/') { e.preventDefault(); ACT.key('/'); }
+    else if (e.key === ',' || e.key === '.') ACT.key(',');
+    else if (e.key === 'Backspace') ACT.key('⌫');
+    else if (e.key === 'Enter') ACT.key('OK');
+  } else if (e.key === 'Enter' && S.phase === 'done') ACT.next();
+  else if (e.key === 'Enter' && S.phase === 'wrong1') ACT.retry();
+});
+
+render();
+try { if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
+</script>
+</body>
+</html>
