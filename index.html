@@ -85,8 +85,8 @@ hr,.rule{border:0;border-top:1px solid var(--ink);margin:0}
 .sign .timer{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums}
 .progress{height:4px;background:var(--rule);margin:0 -20px}
 .progress i{display:block;height:100%;background:var(--l0);transition:width .3s}
-.tabs{display:flex;gap:22px;border-bottom:1px solid var(--rule);margin:18px 0 0}
-.tabs button{padding:10px 0;font-weight:600;color:var(--ink2);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs{display:flex;gap:16px;overflow-x:auto;border-bottom:1px solid var(--rule);margin:18px 0 0}
+.tabs button{padding:10px 0;font-weight:600;font-size:15px;white-space:nowrap;color:var(--ink2);border-bottom:3px solid transparent;margin-bottom:-1px}
 .tabs button.on{color:var(--ink);border-color:var(--l0)}
 .ex{padding:22px 0;border-bottom:1px solid var(--rule)}
 .ex .no{font-family:var(--mono);font-size:12px;color:var(--l0);margin-bottom:6px}
@@ -113,6 +113,36 @@ sup.q{color:var(--l0);font-weight:700}
 i.v{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:1.08em}
 .f{font-size:1.15em;margin:10px 0}
 .nl{width:100%;height:auto;margin:8px 0}
+
+/* ---- aankomst & uitleg ---- */
+.lead{font-size:20px;line-height:1.4;padding:20px 0 4px;letter-spacing:-.01em}
+.goals{margin:8px 0;padding:0;list-style:none;counter-reset:g}
+.goals li{display:grid;grid-template-columns:28px 1fr;padding:7px 0;border-bottom:1px solid var(--rule)}
+.goals li::before{counter-increment:g;content:counter(g);font-family:var(--mono);font-size:12px;color:var(--l0);padding-top:3px}
+.words{display:grid;grid-template-columns:auto 1fr;gap:0 16px;margin-top:8px}
+.words dt,.words dd{margin:0;padding:8px 0;border-bottom:1px solid var(--rule)}
+.words dt{font-weight:700}
+.mist{padding:12px 0;border-bottom:1px solid var(--rule)}
+.mist div{display:grid;grid-template-columns:52px 1fr;align-items:baseline;font-size:18px;padding:2px 0}
+.mist .mono{font-size:11px}
+.mist .f-bad .mono{color:var(--bad)}.mist .f-bad span:last-child{text-decoration:line-through;text-decoration-color:var(--bad);color:var(--ink2)}
+.mist .f-good .mono{color:var(--ok)}
+.mist p{margin:4px 0 0 52px;font-size:14px;color:var(--ink2)}
+.cheat{border:1.5px solid var(--ink);padding:4px 16px 8px;margin-top:10px;background:var(--surface)}
+.cheat ul,.cheat ol{padding-left:18px}
+.seg{display:flex;gap:0;margin-top:16px;border:1px solid var(--ink);width:max-content}
+.seg button{padding:7px 16px;font-family:var(--mono);font-size:13px}
+.seg button+button{border-left:1px solid var(--ink)}
+.seg button.on{background:var(--ink);color:#fff}
+.howto{margin:8px 0;padding:0;list-style:none}
+.howto li{display:grid;grid-template-columns:36px 1fr;gap:4px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.howto li b{display:block}
+.newlvl{border-top:6px solid var(--l0);margin-top:22px;padding-top:14px}
+.linkish{color:var(--ink);text-decoration:underline;text-underline-offset:3px;font-size:14px;margin-top:14px;display:inline-block}
+#sheet{position:fixed;inset:0;background:#16151466;z-index:55;display:flex;align-items:flex-end}
+#sheet[hidden]{display:none}
+#sheet .in{background:var(--paper);width:100%;max-width:520px;margin:0 auto;max-height:85vh;overflow:auto;padding:0 20px calc(24px + env(safe-area-inset-bottom))}
+#sheet .in .sign{margin:0 -20px}
 
 /* ---- oefenen ---- */
 .qa{padding:26px 0 8px}
@@ -183,6 +213,7 @@ textarea{width:100%;min-height:150px;background:var(--surface);color:var(--ink);
   <div class="bar2"><div class="qq" id="scratchQ"></div><button data-a="padClear">Wissen</button><button data-a="padClose">Klaar</button></div>
   <canvas id="cv"></canvas>
 </div>
+<div id="sheet" hidden><div class="in" id="sheetIn"></div></div>
 <div id="toast"></div>
 
 <script id="core">
@@ -633,6 +664,120 @@ const STATIONS = [
 { id: 'baas', name: 'Eindbaas Lijn 0', sub: '8 pittige vragen, 6 goed = verslagen', boss: true },
 ];
 
+
+/* ============ Extra uitleg per station ============ */
+const LINE0 = {
+  title: 'Lijn 0 · Basis',
+  intro: `<p>Lijn 0 is de brug van VMBO naar HAVO 4. Op de HAVO gaan ze ervan uit dat je deze basis blind beheerst: rekenen met negatieve getallen, breuken, machten, formules en vergelijkingen. In de HAVO-boeken wordt het vaak nog maar kort herhaald.</p>
+    <p>Daarom beginnen we hier. Neem de tijd: elk station dat je hier goed beheerst, scheelt je later fouten in bijna elke som van wiskunde B.</p>`,
+};
+const EXTRA = {
+neg: {
+  goals: ['Optellen en aftrekken met negatieve getallen, met de getallenlijn', 'Twee tekens naast elkaar samenvoegen tot één teken', 'De tekenregels bij keer en delen', 'Sommen met drie getallen achter elkaar'],
+  why: 'Negatieve getallen zitten overal in HAVO wiskunde B: in vergelijkingen, bij het invullen van formules, bij punten onder de x-as en bij grafieken die dalen. Wie hier twijfelt, maakt later tekenfouten in bijna elke som. Dit station is het fundament van alles wat komt.',
+  pre: 'Optellen, aftrekken, keer en delen met gewone (positieve) getallen.',
+  words: [['negatief getal', `een getal kleiner dan 0, zoals ${M}5`], ['getallenlijn', 'alle getallen op een rij: links klein, rechts groot'], ['tegengestelde', `hetzelfde getal met het andere teken: het tegengestelde van 4 is ${M}4`], ['teken', 'het plus- of minteken voor een getal']],
+  mistakes: [[`${M}3 ${M} 5 = 2`, `${M}3 ${M} 5 = ${M}8`, 'Min betekent: verder naar links. Vanaf −3 nog 5 stappen naar links kom je op −8.'],
+    [`4 ${M} (${M}2) = 2`, `4 ${M} (${M}2) = 4 + 2 = 6`, 'Min min wordt plus.'],
+    [`(${M}3) × (${M}2) = ${M}6`, `(${M}3) × (${M}2) = 6`, 'Gelijke tekens geven plus.']],
+  examples: [
+    { q: `(${M}6) × 4`, steps: [{ eq: '6 × 4 = 24', why: 'eerst zonder tekens' }, { eq: 'Tekens: min en plus', why: 'verschillende tekens → het antwoord wordt min' }, { eq: `= ${M}24` }] },
+    { q: `${M}20 : (${M}5)`, steps: [{ eq: '20 : 5 = 4', why: 'eerst zonder tekens' }, { eq: 'Tekens: min en min', why: 'gelijke tekens → het antwoord wordt plus' }, { eq: '= 4' }] },
+    { q: `5 ${M} (${M}2) + (${M}4)`, steps: [{ eq: `= 5 + 2 ${M} 4`, why: 'elk dubbel teken wordt één teken' }, { eq: `= 7 ${M} 4`, why: 'van links naar rechts' }, { eq: '= 3' }] },
+  ],
+  summary: `<ul><li>Plus = naar rechts op de getallenlijn, min = naar links</li><li>${M} (${M}a) = + a &nbsp;·&nbsp; + (${M}a) = ${M} a</li><li>Keer en delen: gelijke tekens → plus, verschillende tekens → min</li></ul>`,
+  levels: { 2: { t: 'Nieuw: keer en delen', h: `<p>Vanaf nu krijg je ook vermenigvuldigen en delen met negatieve getallen.</p><p>Reken eerst <b>zonder mintekens</b>. Kies daarna het teken: <b>gelijke tekens → plus</b>, <b>verschillende tekens → min</b>.</p><div class="m">(${M}4) × 3 = ${M}12 &nbsp;&nbsp; (${M}4) × (${M}3) = 12</div>` },
+    3: { t: 'Nieuw: drie getallen in één som', h: `<p>Nu staan er drie getallen achter elkaar. Pak het in twee stappen aan:</p><ol><li>Maak van elk dubbel teken één teken.</li><li>Reken van links naar rechts.</li></ol><div class="m">5 ${M} (${M}2) + (${M}4) = 5 + 2 ${M} 4 = 3</div>` } },
+},
+volg: {
+  goals: ['De vaste volgorde: haakjes, machten, keer en delen, plus en min', 'Waarom 2 + 3 × 4 geen 20 is', `Het verschil tussen ${M}3² en (${M}3)²`],
+  why: 'Iedere wiskundige en iedere rekenmachine gebruikt dezelfde afspraak over de volgorde. Bij formules in HAVO B, zoals y = −x² + 4x, moet je die volgorde blind kennen. Anders reken je verkeerde punten uit en klopt je grafiek niet.',
+  pre: 'Station 0.1 Negatieve getallen.',
+  words: [['bewerking', 'optellen, aftrekken, vermenigvuldigen, delen, machtsverheffen of worteltrekken'], ['macht', `een getal keer zichzelf, zoals ${sup(4, 2)} = 4 × 4`], ['kwadraat', 'een macht met exponent 2'], ['haakjes', 'wat tussen haakjes staat, reken je altijd eerst uit']],
+  mistakes: [['2 + 3 × 4 = 20', '2 + 3 × 4 = 2 + 12 = 14', 'Keer gaat vóór plus.'],
+    [`${M}${sup(4, 2)} = 16`, `${M}${sup(4, 2)} = ${M}16`, 'De macht hoort alleen bij de 4.'],
+    ['12 : 2 × 3 = 2', '12 : 2 × 3 = 6 × 3 = 18', 'Keer en delen zijn even sterk: reken van links naar rechts. "Meneer Van Dale" betekent dus níet dat keer altijd vóór delen gaat.']],
+  examples: [
+    { q: `18 ${M} 12 : 3 × 2`, steps: [{ eq: `= 18 ${M} 4 × 2`, why: 'keer en delen van links naar rechts: eerst 12 : 3' }, { eq: `= 18 ${M} 8`, why: '4 × 2 = 8' }, { eq: '= 10', why: 'min als laatste' }] },
+    { q: `(2 + 3)<sup>2</sup> ${M} 4 × 5`, steps: [{ eq: `= ${sup(5, 2)} ${M} 4 × 5`, why: 'haakjes: 2 + 3 = 5' }, { eq: `= 25 ${M} 4 × 5`, why: `macht: ${sup(5, 2)} = 25` }, { eq: `= 25 ${M} 20`, why: 'keer: 4 × 5 = 20' }, { eq: '= 5' }] },
+  ],
+  summary: `<ol><li>Haakjes</li><li>Machten en wortels</li><li>Keer en delen, van links naar rechts</li><li>Plus en min, van links naar rechts</li></ol><p>${M}${sup(3, 2)} = ${M}9 &nbsp;·&nbsp; (${M}3)<sup>2</sup> = 9</p>`,
+  levels: { 2: { t: 'Nieuw: machten in de som', h: `<p>Er komen nu machten in de sommen. Een macht reken je uit vóór keer en delen, maar ná de haakjes.</p><div class="m">20 ${M} ${sup(3, 2)} = 20 ${M} 9 = 11</div><div class="m">(5 ${M} 2)<sup>2</sup> = ${sup(3, 2)} = 9</div>` },
+    3: { t: 'Nieuw: mintekens en machten', h: `<p>Let nu extra goed op mintekens bij machten:</p><div class="m">${M}${sup(5, 2)} = ${M}25 &nbsp;&nbsp; (${M}5)<sup>2</sup> = 25</div><p>Zonder haakjes hoort de macht alleen bij het getal. Met haakjes doet het minteken mee.</p>` } },
+},
+breuk: {
+  goals: ['Breuken vereenvoudigen', 'Noemers gelijk maken (gelijknamig maken)', 'Breuken optellen en aftrekken', 'Breuken vermenigvuldigen en delen'],
+  why: 'Breuken kom je in HAVO B steeds tegen: als antwoord van een vergelijking (x = 7/3), in formules met delen, bij hellingen en straks bij gebroken functies. Je rekenmachine geeft vaak een kommagetal, maar op het examen moet je vaak een exact antwoord geven, en dat is dan een breuk.',
+  pre: 'De tafels van 1 t/m 10, en station 0.1 voor negatieve breuken.',
+  words: [['teller', 'het getal boven de breukstreep'], ['noemer', 'het getal onder de breukstreep'], ['gelijknamig', 'met dezelfde noemer'], ['vereenvoudigen', 'teller en noemer door hetzelfde getal delen'], ['omgekeerde', `teller en noemer omwisselen: ${fr(3, 4)} wordt ${fr(4, 3)}`]],
+  mistakes: [[`${fr(1, 2)} + ${fr(1, 3)} = ${fr(2, 5)}`, `${fr(1, 2)} + ${fr(1, 3)} = ${fr(3, 6)} + ${fr(2, 6)} = ${fr(5, 6)}`, 'Noemers tel je nooit op.'],
+    [`4 × ${fr(2, 3)} = ${fr(8, 12)}`, `4 × ${fr(2, 3)} = ${fr(8, 3)}`, 'Alleen de teller gaat keer 4.'],
+    [`${fr(3, 4)} : ${fr(2, 5)} = ${fr(6, 20)}`, `${fr(3, 4)} × ${fr(5, 2)} = ${fr(15, 8)}`, 'Bij delen draai je de tweede breuk eerst om.']],
+  examples: [
+    { q: `${fr(5, 6)} ${M} ${fr(1, 4)}`, steps: [{ eq: 'Gelijke noemer: 12', why: '6 en 4 passen allebei in 12' }, { eq: `${fr(10, 12)} ${M} ${fr(3, 12)}`, why: '5/6 = 10/12 (×2) en 1/4 = 3/12 (×3)' }, { eq: `= ${fr(7, 12)}`, why: 'tellers aftrekken, de noemer blijft 12' }] },
+    { q: `${fr(3, 4)} × ${fr(2, 9)}`, steps: [{ eq: `= ${fr(6, 36)}`, why: 'teller × teller, noemer × noemer' }, { eq: `= ${fr(1, 6)}`, why: 'vereenvoudigen: teller en noemer : 6' }] },
+    { q: `${fr(2, 3)} : ${fr(4, 5)}`, steps: [{ eq: `= ${fr(2, 3)} × ${fr(5, 4)}`, why: 'keer het omgekeerde' }, { eq: `= ${fr(10, 12)}` }, { eq: `= ${fr(5, 6)}`, why: 'vereenvoudigen: : 2' }] },
+  ],
+  summary: `<ul><li>Vereenvoudigen: teller en noemer door hetzelfde getal</li><li>Plus en min: eerst gelijknamig maken, dan alleen de tellers</li><li>Keer: teller × teller, noemer × noemer</li><li>Delen: keer het omgekeerde</li><li>Heel getal: 4 = ${fr(4, 1)}</li></ul>`,
+  levels: { 2: { t: 'Nieuw: verschillende noemers en keer', h: `<p>Nu zijn de noemers niet meer gelijk. Zoek een getal waar beide noemers in passen, en reken beide breuken om:</p><div class="m">${fr(1, 4)} + ${fr(1, 6)} = ${fr(3, 12)} + ${fr(2, 12)} = ${fr(5, 12)}</div><p>Ook vermenigvuldigen komt erbij. Dat is makkelijker: teller × teller en noemer × noemer.</p>` },
+    3: { t: 'Nieuw: delen en negatieve breuken', h: `<p>Bij delen door een breuk draai je de tweede breuk om en vermenigvuldig je:</p><div class="m">${fr(1, 2)} : ${fr(3, 4)} = ${fr(1, 2)} × ${fr(4, 3)} = ${fr(4, 6)} = ${fr(2, 3)}</div><p>Er komen ook negatieve breuken. Daarvoor gelden dezelfde regels als bij station 0.1.</p>` } },
+},
+macht: {
+  goals: ['Wat een macht is: grondtal en exponent', 'Negatieve grondtallen', 'De rekenregels voor machten', 'Exponent 0 en negatieve exponenten', 'Wortels'],
+  why: 'Machten zijn de basis van drie latere lijnen: kwadratische functies (lijn 2), exponentiële groei (lijn 3) en de afgeleide (lijn 5): de afgeleide van x³ is 3x². Wortels heb je nodig bij Pythagoras en bij vergelijkingen als x² = 25.',
+  pre: 'Station 0.1 Negatieve getallen en station 0.3 Breuken (voor negatieve exponenten).',
+  words: [['grondtal', `het grote getal onderaan: bij ${sup(2, 5)} is dat 2`], ['exponent', 'het kleine getal boven: hoe vaak je het grondtal met zichzelf vermenigvuldigt'], ['kwadraat', 'tot de macht 2'], ['wortel', `het omgekeerde van kwadrateren: ${sqrt(9)} = 3`]],
+  mistakes: [[`${sup(2, 3)} = 6`, `${sup(2, 3)} = 2 × 2 × 2 = 8`, 'De exponent is geen keer-getal.'],
+    [`${sup('a', 3)} × ${sup('a', 2)} = ${sup('a', 6)}`, `${sup('a', 3)} × ${sup('a', 2)} = ${sup('a', 5)}`, 'Bij keer tel je de exponenten op.'],
+    [`${sup(5, 0)} = 0`, `${sup(5, 0)} = 1`, 'Elk getal (behalve 0) tot de macht 0 is 1.'],
+    [`${sup(2, M + '1')} = ${M}2`, `${sup(2, M + '1')} = ${fr(1, 2)}`, 'Een negatieve exponent betekent 1 gedeeld door.']],
+  examples: [
+    { q: `(${M}3)<sup>3</sup>`, steps: [{ eq: `= (${M}3) × (${M}3) × (${M}3)` }, { eq: `= 9 × (${M}3)`, why: 'min keer min is plus' }, { eq: `= ${M}27`, why: 'oneven exponent → negatief' }] },
+    { q: sup(3, M + '2'), steps: [{ eq: `= ${fr(1, sup(3, 2))}`, why: 'negatieve exponent: 1 gedeeld door de macht' }, { eq: `= ${fr(1, 9)}` }] },
+    { q: sqrt(`${sup(6, 2)} + ${sup(8, 2)}`), steps: [{ eq: `= ${sqrt('36 + 64')}`, why: 'eerst de machten onder de wortel' }, { eq: `= ${sqrt(100)}` }, { eq: '= 10', why: 'want 10 × 10 = 100' }] },
+  ],
+  summary: `<ul><li>${sup('a', 'm')} × ${sup('a', 'n')} = ${sup('a', 'm+n')}</li><li>${sup('a', 'm')} : ${sup('a', 'n')} = ${sup('a', 'm−n')}</li><li>(${sup('a', 'm')})<sup>n</sup> = ${sup('a', 'm·n')}</li><li>${sup('a', 0)} = 1 &nbsp;·&nbsp; ${sup('a', M + 'n')} = ${fr(1, sup('a', 'n'))}</li><li>(${M}a)<sup>even</sup> is positief, (${M}a)<sup>oneven</sup> is negatief</li></ul>`,
+  levels: { 2: { t: 'Nieuw: rekenregels en negatieve grondtallen', h: `<p>Je hoeft machten nu niet altijd uit te rekenen. Met hetzelfde grondtal gebruik je de rekenregels:</p><div class="m">${sup(5, 3)} × ${sup(5, 4)} = ${sup(5, 7)}</div><p>Ook negatieve grondtallen komen erbij: let op het verschil tussen (${M}2)<sup>4</sup> = 16 en ${M}${sup(2, 4)} = ${M}16.</p>` },
+    3: { t: 'Nieuw: negatieve exponenten en wortels', h: `<p>Een negatieve exponent maakt een breuk:</p><div class="m">${sup(2, M + '3')} = ${fr(1, sup(2, 3))} = ${fr(1, 8)}</div><p>Bij een wortel van een som reken je eerst uit wat onder de wortel staat. ${sqrt(`${sup(3, 2)} + ${sup(4, 2)}`)} is ${sqrt(25)} = 5, en niet 3 + 4.</p>` } },
+},
+form: {
+  goals: ['Een getal invullen in een formule', 'Negatieve getallen invullen met haakjes', 'Formules met meer letters', 'Formules met x² en x'],
+  why: 'In HAVO B is bijna alles een formule: functies, groeimodellen, verbanden uit de natuurkunde. Invullen is de eerste stap als je een tabel maakt, een grafiek tekent of controleert of een punt op een grafiek ligt. In lijn 2 doe je dit bij elke functie.',
+  pre: 'Station 0.1 Negatieve getallen en station 0.2 Volgorde van bewerkingen.',
+  words: [['formule', 'een regel die zegt hoe je iets uitrekent, met letters'], ['variabele', `een letter die verschillende waarden kan hebben, zoals ${X}`], ['invullen', 'de letter vervangen door een getal'], [`3${X}`, `betekent 3 · ${X}, er staat een onzichtbaar keer-teken`]],
+  mistakes: [[`${X}<sup>2</sup> met ${X} = ${M}3 geeft ${M}9`, `(${M}3)<sup>2</sup> = 9`, 'Zet haakjes om een negatief getal.'],
+    [`3${X} met ${X} = 4 geeft 34`, `3 · 4 = 12`, `3${X} betekent 3 keer ${X}.`],
+    [`2${X} + 1 met ${X} = 5 geeft 2 · 6 = 12`, `2 · 5 + 1 = 11`, 'Na het invullen geldt gewoon de volgorde van bewerkingen.']],
+  examples: [
+    { q: `${V('y')} = 2${X} ${M} 7, &nbsp; ${X} = ${M}4`, steps: [{ eq: `${V('y')} = 2 · (${M}4) ${M} 7`, why: 'invullen, met haakjes' }, { eq: `${V('y')} = ${M}8 ${M} 7`, why: 'keer eerst' }, { eq: `${V('y')} = ${M}15` }] },
+    { q: `${V('A')} = ${V('l')} · ${V('b')}, &nbsp; ${V('l')} = 7 en ${V('b')} = 3`, steps: [{ eq: `${V('A')} = 7 · 3`, why: 'beide letters invullen' }, { eq: `${V('A')} = 21` }] },
+  ],
+  summary: `<ul><li>Vervang de letter door het getal</li><li>Negatief getal? Altijd tussen haakjes</li><li>3${X} = 3 · ${X}</li><li>Daarna gewoon de volgorde van bewerkingen</li></ul>`,
+  levels: { 2: { t: 'Nieuw: negatieve getallen invullen', h: `<p>Nu ga je negatieve getallen invullen. Zet ze <b>altijd tussen haakjes</b>, dan kan het niet misgaan:</p><div class="m">${V('y')} = ${X}<sup>2</sup> + 1, &nbsp; ${X} = ${M}4<br>${V('y')} = (${M}4)<sup>2</sup> + 1 = 16 + 1 = 17</div>` },
+    3: { t: `Nieuw: formules met ${X}² én ${X}`, h: `<p>Nu staan ${X}<sup>2</sup> en ${X} samen in één formule. Dit zijn de formules van parabolen, die je in lijn 2 tekent.</p><div class="m">${V('y')} = ${X}<sup>2</sup> ${M} 3${X} + 2, &nbsp; ${X} = ${M}1<br>${V('y')} = (${M}1)<sup>2</sup> ${M} 3 · (${M}1) + 2 = 1 + 3 + 2 = 6</div>` } },
+},
+verg: {
+  goals: ['Wat een vergelijking is', 'Oplossen met de balansmethode', `${X}'en aan beide kanten`, 'Haakjes wegwerken', 'Je antwoord controleren'],
+  why: 'Vergelijkingen oplossen is misschien wel de belangrijkste vaardigheid van HAVO B. Snijpunten van grafieken, nulpunten en toppen komen allemaal neer op een vergelijking oplossen. Lineaire vergelijkingen zijn de eerste stap. In lijn 1 volgen de kwadratische, met de abc-formule.',
+  pre: 'Alle vorige stations, vooral 0.1 Negatieve getallen en 0.3 Breuken.',
+  words: [['vergelijking', 'twee kanten met een is-teken ertussen, met een onbekende'], ['oplossing', `het getal voor ${X} waarbij links en rechts gelijk zijn`], ['balansmethode', 'links en rechts steeds hetzelfde doen'], ['haakjes wegwerken', `elk getal binnen de haakjes vermenigvuldigen: a(${X} + b) = a${X} + ab`]],
+  mistakes: [[`${X} + 5 = 12 → ${X} = 17`, `${X} + 5 = 12 → ${X} = 7`, 'Je haalt +5 weg door aan beide kanten 5 af te trekken.'],
+    [`3${X} = 12 → ${X} = 9`, `3${X} = 12 → ${X} = 4`, `3${X} is 3 keer ${X}, dus je deelt door 3.`],
+    [`2(${X} + 3) = 2${X} + 3`, `2(${X} + 3) = 2${X} + 6`, 'Elk getal binnen de haakjes gaat keer 2.']],
+  examples: [
+    { q: `4${X} + 7 = 31`, steps: [{ eq: `4${X} = 24`, why: `beide kanten ${M} 7` }, { eq: `${X} = 6`, why: 'beide kanten : 4' }, { eq: 'Controle: 4 · 6 + 7 = 31 ✓' }] },
+    { q: `3(${X} ${M} 2) = 2${X} + 5`, steps: [{ eq: `3${X} ${M} 6 = 2${X} + 5`, why: 'haakjes wegwerken' }, { eq: `${X} ${M} 6 = 5`, why: `beide kanten ${M} 2${X}` }, { eq: `${X} = 11`, why: 'beide kanten + 6' }, { eq: 'Controle: 3 · 9 = 27 en 2 · 11 + 5 = 27 ✓' }] },
+  ],
+  summary: `<ol><li>Haakjes wegwerken</li><li>${X}'en naar één kant</li><li>Getallen naar de andere kant</li><li>Delen door het getal vóór ${X}</li><li>Controleren door in te vullen</li></ol>`,
+  levels: { 2: { t: `Nieuw: ${X} aan beide kanten`, h: `<p>Nu staat er aan beide kanten een ${X}. Haal eerst alle ${X}'en naar één kant:</p><div class="m">5${X} + 1 = 2${X} + 13<br><small>beide kanten ${M} 2${X}</small><br>3${X} + 1 = 13 → 3${X} = 12 → ${X} = 4</div>` },
+    3: { t: 'Nieuw: haakjes en breuken als antwoord', h: `<p>Er komen haakjes in de vergelijking. Werk die eerst weg: elk getal binnen de haakjes gaat keer het getal ervoor.</p><div class="m">2(${X} + 4) = 2${X} + 8</div><p>Soms komt er geen heel getal uit. Dan is je antwoord een breuk, bijvoorbeeld ${X} = ${fr(7, 3)}. Typ dat als 7/3.</p>` } },
+},
+};
+for (const s of STATIONS) {
+  const e = EXTRA[s.id]; if (!e) continue;
+  Object.assign(s, e, { examples: [s.example, ...(e.examples || [])] });
+}
+
 const FUTURE = [
   ['l1', 1, 'Algebra', 'haakjes, ontbinden, abc-formule'],
   ['l2', 2, 'Functies en grafieken', 'lijnen, parabolen, verschuiven'],
@@ -761,28 +906,65 @@ home() {
     <div class="li"><span class="bullet">0</span><span class="t">Basis</span><span class="mono">in dienst</span></div>
     ${FUTURE.map(f => `<div class="li off"><span class="bullet b${f[1]}">${f[1]}</span><span class="t">${f[2]}<br><small>${f[3]}</small></span><span class="mono muted">in aanbouw</span></div>`).join('')}
   </div>
+  <button class="linkish" data-a="howto">Hoe werkt deze gids?</button>
   <p class="small-print">Een station gaat open als je het vorige voor 60% beheerst. Stations die je al kunt, komen na een paar dagen terug om te herhalen. Mis je een dag, dan houdt je wekelijkse vertragingskaartje je reeks in stand. Kaart niet op schaal.</p>`;
 },
 station() {
-  const s = byId(VIEW.id), tab = VIEW.tab || 'uitleg', i = STATIONS.indexOf(s);
+  const s = byId(VIEW.id), i = STATIONS.indexOf(s);
   if (s.boss) return sign('Centraal', 'eindbaas lijn 0') + `
     <div class="ex"><div class="no">LAATSTE HALTE</div><h3>Acht vragen. Zes goed en Lijn 0 is klaar.</h3>
-    <p>Je krijgt vragen op het hoogste niveau, uit alle zes stations door elkaar. Hints mogen, maar de uitwerking krijg je pas na afloop van elke vraag.</p>
+    <p>Je krijgt vragen op het hoogste niveau, uit alle zes stations door elkaar. Hints mogen. De uitwerking zie je na elke vraag.</p>
+    <p>Twijfel je over een onderwerp? Kijk dan eerst nog even naar het spiekbriefje van dat station.</p>
     ${st.bossWon ? '<p class="muted">Je hebt de eindbaas al eens verslagen. Lukt het nog een keer?</p>' : ''}</div>
     <div class="row"><button class="btn" data-a="boss">Uitdaging aannemen</button></div>`;
-  const m = ss(s.id).m;
+  const m = ss(s.id).m, tab = VIEW.tab || 'uitleg';
   let body = '';
-  if (tab === 'uitleg') body = s.intro.map((c, k) => `<div class="ex"><div class="no">${String(k + 1).padStart(2, '0')}</div><h3>${c.t}</h3>${c.h}</div>`).join('') +
-    `<div class="row"><button class="btn line" data-a="tab" data-arg="voorbeeld">Naar het voorbeeld →</button></div>`;
-  else {
-    const n = VIEW.step || 0, ex = s.example;
-    body = `<div class="exq">${ex.q}</div>
-      <div class="steps">${ex.steps.slice(0, n).map(x => `<div class="stp"><span>${x.eq}</span><span class="why">${x.why}</span></div>`).join('')}</div>
-      <div class="row">${n < ex.steps.length ? `<button class="btn line" data-a="step">Volgende stap  ${n + 1}/${ex.steps.length}</button>` : `<button class="btn" data-a="practice" data-arg="${s.id}">Zelf oefenen →</button>`}</div>`;
+  if (tab === 'overzicht') {
+    const first = !ss(s.id).seen;
+    body = `${first ? `<p class="lead">Je komt aan op station ${CODE[s.id]}: <b>${s.name}</b>.</p>` : ''}
+      ${i === 0 ? `<div class="ex"><div class="no">LIJN 0</div><h3>Je begint aan ${LINE0.title}</h3>${LINE0.intro}</div>` : ''}
+      <div class="ex"><div class="no">WAT GA JE LEREN</div><ul class="goals">${s.goals.map(g => `<li><span>${g}</span></li>`).join('')}</ul></div>
+      <div class="ex"><div class="no">WAAROM IS DIT BELANGRIJK</div><p>${s.why}</p></div>
+      <div class="ex"><div class="no">WAT MOET JE AL KUNNEN</div><p>${s.pre}</p></div>
+      <div class="ex"><div class="no">BELANGRIJKE WOORDEN</div><dl class="words">${s.words.map(w => `<dt>${w[0]}</dt><dd>${w[1]}</dd>`).join('')}</dl></div>
+      <div class="ex"><div class="no">ZO WERKT DIT STATION</div><ol class="howto">
+        <li><span class="mono">1</span><span><b>Uitleg</b>Lees de korte uitleg, de veelgemaakte fouten en het spiekbriefje.</span></li>
+        <li><span class="mono">2</span><span><b>Voorbeelden</b>Tik ${s.examples.length} uitgewerkte voorbeelden stap voor stap door.</span></li>
+        <li><span class="mono">3</span><span><b>Oefenen</b>De vragen worden moeilijker naarmate je beter wordt. Bij 80% beheers je het station.</span></li></ol></div>
+      <div class="row"><button class="btn" data-a="tab" data-arg="uitleg">${first ? 'Begin met de uitleg →' : 'Naar de uitleg →'}</button></div>`;
+  } else if (tab === 'uitleg') {
+    body = s.intro.map((c, k) => `<div class="ex"><div class="no">${String(k + 1).padStart(2, '0')}</div><h3>${c.t}</h3>${c.h}</div>`).join('') +
+      `<div class="ex"><div class="no">LET OP</div><h3>Veelgemaakte fouten</h3>${mistakesHTML(s)}</div>
+       <div class="ex"><div class="no">SPIEKBRIEFJE</div><h3>Alles op een rij</h3><div class="cheat">${s.summary}</div></div>
+       <div class="row"><button class="btn line" data-a="tab" data-arg="voorbeeld">Naar de voorbeelden →</button></div>`;
+  } else {
+    const k = VIEW.ex || 0, n = VIEW.step || 0, ex = s.examples[k], last = k === s.examples.length - 1;
+    body = `<div style="display:flex;align-items:center;gap:12px;margin-top:16px"><span class="mono muted">VOORBEELD</span><div class="seg" style="margin:0">${s.examples.map((_, j) => `<button class="${j === k ? 'on' : ''}" data-a="exPick" data-arg="${j}">${j + 1}</button>`).join('')}</div></div>
+      <div class="exq">${ex.q}</div>
+      <div class="steps">${ex.steps.slice(0, n).map(x => `<div class="stp"><span>${x.eq}</span><span class="why">${x.why || ''}</span></div>`).join('')}</div>
+      <div class="row">${n < ex.steps.length ? `<button class="btn line" data-a="step">Volgende stap  ${n + 1}/${ex.steps.length}</button>`
+        : last ? `<button class="btn" data-a="practice" data-arg="${s.id}">Zelf oefenen →</button>` : `<button class="btn line" data-a="exPick" data-arg="${k + 1}">Volgend voorbeeld →</button>`}</div>
+      ${n >= ex.steps.length && !last ? `<div class="row"><button class="btn text" data-a="practice" data-arg="${s.id}">Of meteen oefenen</button></div>` : ''}`;
   }
+  const tabs = [['overzicht', 'Overzicht'], ['uitleg', 'Uitleg'], ['voorbeeld', 'Voorbeelden']];
   return sign(s.name, `station ${CODE[s.id]} · ${m}% beheerst`) + `<div class="progress"><i style="width:${m}%"></i></div>
-    <div class="tabs"><button class="${tab === 'uitleg' ? 'on' : ''}" data-a="tab" data-arg="uitleg">Uitleg</button><button class="${tab === 'voorbeeld' ? 'on' : ''}" data-a="tab" data-arg="voorbeeld">Voorbeeld</button><button data-a="practice" data-arg="${s.id}">Oefenen</button></div>
+    <div class="tabs">${tabs.map(t => `<button class="${tab === t[0] ? 'on' : ''}" data-a="tab" data-arg="${t[0]}">${t[1]}</button>`).join('')}<button data-a="practice" data-arg="${s.id}">Oefenen</button></div>
     ${body}`;
+},
+welcome() {
+  return `<section class="cover"><h1>Wiskunde Lijn</h1><div class="meta"><b>Reizigersgids</b><span class="mono muted">editie 2026</span></div>
+    <div class="sub"><span class="bullet sm">0</span>VMBO naar HAVO wiskunde B</div></section>
+    <p class="lead">Welkom. Deze gids brengt je stap voor stap van VMBO-niveau naar HAVO wiskunde B, in korte ritjes die passen in je treinreis.</p>
+    <div class="ex"><div class="no">HOE WERKT DEZE GIDS</div><ol class="howto">
+      <li><span class="bullet sm">0</span><span><b>Lijnen en stations</b>Elke lijn is een vakgebied, elk station is één onderwerp. Je begint op Lijn 0, de basis.</span></li>
+      <li><span class="mono">A</span><span><b>Aankomst</b>Bij elk nieuw station lees je eerst wat je gaat leren en waarom het belangrijk is.</span></li>
+      <li><span class="mono">B</span><span><b>Uitleg en voorbeelden</b>Korte uitleg, veelgemaakte fouten, een spiekbriefje en voorbeelden die je stap voor stap doortikt.</span></li>
+      <li><span class="mono">C</span><span><b>Oefenen</b>Vragen die moeilijker worden als je beter wordt. Vast? Gebruik een hint, het kladblok of de uitlegknop.</span></li>
+      <li><span class="mono">D</span><span><b>Doorrijden</b>Bij 60% gaat het volgende station open. Bij 80% beheers je het. Wat je kunt, komt later terug om te herhalen.</span></li>
+      <li><span class="mono">E</span><span><b>Treinrit</b>Weinig tijd? Kies een treinrit van 5 tot 20 minuten en de app kiest zelf wat je moet oefenen.</span></li>
+    </ol></div>
+    <div class="ex"><div class="no">LIJN 0</div><h3>${LINE0.title}</h3>${LINE0.intro}</div>
+    <div class="row"><button class="btn" data-a="welcomed">Naar de netkaart →</button></div>`;
 },
 practice() {
   const q = S.q, cs = byId(S.cur);
@@ -792,6 +974,7 @@ practice() {
   else if (S.mode === 'sprint') top = sign('Sprint', `${S.correct} goed`, close, `<span class="timer" id="timer">${timeLeft()}</span>`) + `<div class="progress"><i id="sprintbar" style="width:100%"></i></div>`;
   else if (S.mode === 'boss') top = sign('Centraal', `eindbaas · vraag ${S.count + 1} van 8`, close, `<span class="num">${S.correct} goed</span>`) + `<div class="progress"><i style="width:${S.count / 8 * 100}%"></i></div>`;
   else top = sign(cs.name, `station ${CODE[S.cur]} · ${ss(S.cur).m}%`, close, `<span class="num">+${S.xp} XP</span>`) + `<div class="progress"><i style="width:${ss(S.cur).m}%"></i></div>`;
+  if (S.levelUp) return top + levelUpView();
   if (q.kind === 'mc') return top + mcView(q);
   const ansCls = S.phase === 'done' ? (S.lastOk ? 'ok' : 'bad') : (S.flash || '');
   const tip = q.tip || cs.tip;
@@ -802,7 +985,7 @@ practice() {
     <div class="ans ${S.input ? '' : 'empty'} ${ansCls}" id="ans">${S.input.replace(/-/g, M)}</div></div>
   ${S.hints.map((h, i) => `<div class="hint"><span class="mono">HINT ${i + 1}</span><span>${h}</span></div>`).join('')}
   ${S.phase === 'ask' ? `
-    ${S.mode !== 'sprint' ? `<div class="tools"><button data-a="hint" ${S.hints.length >= 3 ? 'disabled' : ''}>Hint ${S.hints.length}/3</button><button data-a="pad">Kladblok</button></div>` : ''}
+    ${S.mode !== 'sprint' ? `<div class="tools"><button data-a="hint" ${S.hints.length >= 3 ? 'disabled' : ''}>Hint ${S.hints.length}/3</button><button data-a="sheet">Uitleg</button><button data-a="pad">Kladblok</button></div>` : ''}
     <div class="pad">${['7', '8', '9', '⌫', '4', '5', '6', '/', '1', '2', '3', '−', ',', '0', 'C', 'OK'].map(k => `<button data-a="key" data-arg="${k}" class="${k === 'OK' ? 'ok' : /[⌫\/−,C]/.test(k) ? 'op' : ''}">${k}</button>`).join('')}</div>` : feedbackView()}`;
 },
 ritpick() {
@@ -844,6 +1027,25 @@ notes() {
 },
 };
 
+function mistakesHTML(s) {
+  return s.mistakes.map(x => `<div class="mist"><div class="f-bad"><span class="mono">FOUT</span><span>${x[0]}</span></div><div class="f-good"><span class="mono">GOED</span><span>${x[1]}</span></div>${x[2] ? `<p>${x[2]}</p>` : ''}</div>`).join('');
+}
+function sheetOpen(id) {
+  const s = byId(id);
+  document.getElementById('sheetIn').innerHTML = `<header class="sign"><span class="bullet">0</span><h1>${s.name}<small>spiekbriefje</small></h1><button class="x" data-a="sheetClose" aria-label="Sluiten">×</button></header>
+    <div class="cheat" style="margin-top:16px">${s.summary}</div>
+    <div class="ex"><div class="no">VEELGEMAAKTE FOUTEN</div>${mistakesHTML(s)}</div>
+    ${s.intro.map(c => `<div class="ex"><h3>${c.t}</h3>${c.h}</div>`).join('')}
+    <div class="row"><button class="btn" data-a="sheetClose">Terug naar de vraag</button></div>`;
+  document.getElementById('sheet').hidden = false; document.getElementById('sheetIn').scrollTop = 0;
+}
+function levelUpView() {
+  const s = byId(S.levelUp.id), L = s.levels[S.levelUp.lv];
+  return `<div class="newlvl"><div class="no mono" style="color:var(--l0)">NIVEAU ${S.levelUp.lv} VAN 3 · STATION ${CODE[s.id]}</div>
+    <div class="ex" style="padding-top:8px"><h3>${L.t}</h3>${L.h}</div>
+    <p class="muted" style="margin-top:14px;font-size:14px">Je bent goed bezig: daarom worden de vragen nu iets moeilijker.</p>
+    <div class="row"><button class="btn" data-a="lvOk">Verder oefenen →</button></div></div>`;
+}
 function feedbackView() {
   const q = S.q;
   const solHtml = `<div class="sol"><div>${q.html}</div>${q.sol.map(x => `<div>${x.eq}${x.why ? `<span class="why">${x.why}</span>` : ''}</div>`).join('')}</div>`;
@@ -882,6 +1084,8 @@ function nextQ() {
   const lv = S.mode === 'boss' ? 3 : S.mode === 'sprint' ? 1 : lvlOf(m);
   const useMc = S.mode !== 'sprint' && S.mode !== 'boss' && s.mc && m >= 25 && Math.random() < .17;
   S.q = useMc ? Object.assign({ kind: 'mc' }, s.mc()) : s.gen(lv);
+  S.levelUp = null;
+  if ((S.mode === 'station' || S.mode === 'rit') && s.levels && lv > (ss(id).lvSeen || 1) && s.levels[lv]) S.levelUp = { id, lv };
   S.lv = lv; S.input = ''; S.hints = []; S.hintsUsed = 0; S.attempts = 0; S.phase = 'ask'; S.msg = ''; S.showSol = false; S.flash = ''; S.mcPick = -1;
   padReset();
 }
@@ -924,7 +1128,7 @@ function startTimer() {
   }, 250);
 }
 function endSession() {
-  clearInterval(timerId); padClose();
+  clearInterval(timerId); padClose(); document.getElementById('sheet').hidden = true;
   const s = S; let res;
   if (s.mode === 'sprint') {
     const rec = s.correct > st.best.sprint; if (rec) st.best.sprint = s.correct; if (s.correct) touchStreak();
@@ -962,7 +1166,7 @@ cv.addEventListener('pointermove', e => { if (!drawing) return; const [x, y] = p
 
 /* ============ Acties ============ */
 const ACT = {
-  home() { clearInterval(timerId); S = null; go({ name: 'home' }); },
+  home() { clearInterval(timerId); S = null; document.getElementById('sheet').hidden = true; go({ name: 'home' }); },
   open(id) {
     const i = STATIONS.findIndex(s => s.id === id);
     if (!unlocked(i)) {
@@ -970,11 +1174,17 @@ const ACT = {
       if (VIEW.confirm === id) { ss(id).open = true; save(); go({ name: 'station', id }); return; }
       VIEW.confirm = id; toast('Dit station is nog gesloten. Tik nog een keer om het toch te openen.'); return;
     }
-    go({ name: 'station', id });
+    go({ name: 'station', id, tab: STATIONS[i].boss || ss(id).seen ? 'uitleg' : 'overzicht' });
   },
-  tab(t) { go({ name: 'station', id: VIEW.id, tab: t, step: 0 }); },
+  tab(t) { if (VIEW.tab === 'overzicht') { ss(VIEW.id).seen = true; save(); } go({ name: 'station', id: VIEW.id, tab: t, step: 0, ex: 0 }); },
+  exPick(k) { go({ name: 'station', id: VIEW.id, tab: 'voorbeeld', ex: +k, step: 0 }); },
+  welcomed() { st.welcomed = true; save(); go({ name: 'home' }); },
+  howto() { go({ name: 'welcome' }); },
+  sheet() { sheetOpen(S.cur); },
+  sheetClose() { document.getElementById('sheet').hidden = true; },
+  lvOk() { const L = S.levelUp; ss(L.id).lvSeen = L.lv; save(); S.levelUp = null; render(); },
   step() { VIEW.step = (VIEW.step || 0) + 1; render(); },
-  practice(id) { newSession('station', { station: id }); },
+  practice(id) { if (VIEW.name === 'station') { ss(id).seen = true; save(); } newSession('station', { station: id }); },
   ritpick() { go({ name: 'ritpick' }); },
   rit(m) { m = +m; newSession('rit', { mins: m, end: m ? Date.now() + m * 60000 : 0 }); },
   sprint() { newSession('sprint', { end: Date.now() + 60000 }); },
@@ -1012,6 +1222,7 @@ const ACT = {
 document.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = ACT[el.dataset.a]; if (f) f(el.dataset.arg, el); });
 document.addEventListener('keydown', e => {
   if (VIEW.name !== 'practice' || !S || e.target.tagName === 'TEXTAREA') return;
+  if (S.levelUp) { if (e.key === 'Enter') ACT.lvOk(); return; }
   if (S.phase === 'ask' && S.q.kind !== 'mc') {
     if (/^[0-9]$/.test(e.key)) ACT.key(e.key);
     else if (e.key === '-') ACT.key('−');
@@ -1023,6 +1234,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Enter' && S.phase === 'wrong1') ACT.retry();
 });
 
+if (!st.welcomed) VIEW = { name: 'welcome' };
 render();
 try { if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
 </script>
